@@ -1,0 +1,21 @@
+﻿{
+  "name": "Lockbox.Client",
+  "authors": [ "Piotr Gankiewicz" ],
+  "title": "Lockbox.Client",
+  "packOptions": {
+    "projectUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE",
+    "packageType": "DotnetCliTool"
+  },
+  "version": "1.0.0-*",
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50"
+      ]
+    }
+  }
+}
