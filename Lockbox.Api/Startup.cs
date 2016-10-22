@@ -22,7 +22,6 @@ namespace Lockbox.Api
         {
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables()
                 .SetBasePath(env.ContentRootPath);
 
@@ -32,7 +31,6 @@ namespace Lockbox.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddWebEncoders();
-            services.AddCors();
             ApplicationContainer = GetServiceContainer(services);
 
             return new AutofacServiceProvider(ApplicationContainer);
@@ -42,10 +40,6 @@ namespace Lockbox.Api
         {
             loggerFactory.AddNLog();
             env.ConfigureNLog("nlog.config");
-            app.UseCors(builder => builder.AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowAnyOrigin()
-                .AllowCredentials());
             app.UseOwin().UseNancy(x => x.Bootstrapper = new Bootstrapper(Configuration));
         }
 
