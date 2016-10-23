@@ -34,7 +34,8 @@ namespace Lockbox.Api.IoC.Modules
                 return database;
             }).As<IMongoDatabase>();
 
-            builder.RegisterType<MongoDbRecordRepository>().As<IRecordRepository>();
+            builder.RegisterType<RecordRepository>().As<IRecordRepository>();
+            builder.RegisterType<UserRepository>().As<IUserRepository>();
         }
     }
 }

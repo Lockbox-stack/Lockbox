@@ -3,7 +3,6 @@ using System.Reflection;
 using Autofac;
 using Lockbox.Api.Extensions;
 using Lockbox.Api.IoC.Modules;
-using Lockbox.Api.Services;
 using Microsoft.Extensions.Configuration;
 
 namespace Lockbox.Api.IoC
@@ -14,7 +13,7 @@ namespace Lockbox.Api.IoC
         {
             RegisterSettings(builder, configuration);
             builder.RegisterModule<MongoDbModule>();
-            builder.RegisterType<RecordService>().As<IRecordService>();
+            builder.RegisterModule<ServiceModule>();
         }
 
         private static void RegisterSettings(ContainerBuilder builder, IConfiguration configuration)

@@ -15,7 +15,9 @@ namespace Lockbox.Examples.WebApp
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                .AddLockbox("http://localhost:5000", "xyz", "config");
+                .AddLockbox("http://localhost:5000", 
+                "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJTdWIiOiJzcGV0eiIsIkV4cCI6NjY3Njg0NzU3MDA5NzAxOTUzfQ.XxxPuisxv2c4vtT0yoaCSpM_GIA5HyjlR8KeZISgzKjo1Prt5NiskHTL1YpVzemqu_I88EuQrJnICCx87hy13g", 
+                "config");
 
             Configuration = builder.Build();
         }

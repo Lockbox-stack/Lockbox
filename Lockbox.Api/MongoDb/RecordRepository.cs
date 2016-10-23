@@ -6,11 +6,11 @@ using MongoDB.Driver.Linq;
 
 namespace Lockbox.Api.MongoDb
 {
-    public class MongoDbRecordRepository : IRecordRepository
+    public class RecordRepository : IRecordRepository
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbRecordRepository(IMongoDatabase database)
+        public RecordRepository(IMongoDatabase database)
         {
             _database = database;
         }

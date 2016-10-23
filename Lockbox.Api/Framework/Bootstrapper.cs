@@ -1,7 +1,11 @@
-﻿using Autofac;
+﻿using System.Security.Claims;
+using System.Security.Principal;
+using Autofac;
 using Lockbox.Api.IoC;
 using Lockbox.Api.MongoDb;
+using Lockbox.Api.Services;
 using Microsoft.Extensions.Configuration;
+using Nancy.Authentication.Stateless;
 using Nancy.Bootstrapper;
 using NLog;
 
@@ -20,8 +24,9 @@ namespace Lockbox.Api.Framework
         protected override void ApplicationStartup(ILifetimeScope container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
-            Logger.Info("Lockbox has started.");
             MongoConfigurator.Initialize();
+            SetupTokenAuthentication(container, pipelines);
+            Logger.Info("Lockbox API has started.");
         }
 
         protected override void ConfigureApplicationContainer(ILifetimeScope existingContainer)
@@ -30,6 +35,21 @@ namespace Lockbox.Api.Framework
             var builder = new ContainerBuilder();
             Container.Initialize(builder, _configuration);
             builder.Update(existingContainer.ComponentRegistry);
+        }
+
+        protected void SetupTokenAuthentication(ILifetimeScope container, IPipelines pipelines)
+        {
+            var jwtTokenHandler = container.Resolve<IJwtTokenHandler>();
+            var apiKeyService = container.Resolve<IApiKeyService>();
+            var configuration = new StatelessAuthenticationConfiguration(ctx =>
+            {
+                var apikey = jwtTokenHandler.GetFromAuthorizationHeader(ctx.Request.Headers.Authorization);
+                var token = jwtTokenHandler.Decode(apikey);
+                var isValid = apiKeyService.IsValidAsync(apikey).Result;
+
+                return isValid ? new ClaimsPrincipal(new GenericIdentity(token.Sub)) : null;
+            });
+            StatelessAuthentication.Enable(pipelines, configuration);
         }
     }
 }

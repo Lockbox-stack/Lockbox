@@ -1,5 +1,6 @@
 ﻿using Lockbox.Api.Services;
 using Nancy;
+using Nancy.Security;
 
 namespace Lockbox.Api.Modules
 {
@@ -7,6 +8,8 @@ namespace Lockbox.Api.Modules
     {
         public RecordModule(IRecordService recordService) : base("records")
         {
+            this.RequiresAuthentication();
+
             Get("{name}", async args =>
             {
                 var record = await recordService.GetValueAsync((string) args.name);

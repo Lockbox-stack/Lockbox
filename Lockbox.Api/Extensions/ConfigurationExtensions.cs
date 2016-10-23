@@ -7,6 +7,7 @@ namespace Lockbox.Api.Extensions
     public static class ConfigurationExtensions
     {
         private static readonly string EncryptionKeyEnvironmentVariable = "LOCKBOX_ENCRYPTION_KEY";
+        private static readonly string SecretKeyEnvironmentVariable = "LOCKBOX_SECRET_KEY";
 
         public static T GetSettings<T>(this IConfiguration configuration, string section = "") where T : class, new()
         => GetSettings(configuration, typeof(T), section) as T;
@@ -28,18 +29,22 @@ namespace Lockbox.Api.Extensions
 
         private static LockboxSettings InitializeLockboxSettings(LockboxSettings settings, IConfiguration configuration)
         {
-            if (settings.EncryptionKey.NotEmpty())
-                return settings;
-
-            var encryptionKey = configuration.GetChildren()
-                .FirstOrDefault(x => x.Key == EncryptionKeyEnvironmentVariable)?.Value;
-
-            if (encryptionKey.Empty())
+            if (settings.EncryptionKey.Empty())
             {
-                throw new ArgumentException("Lockbox encryption key can not be empty!", nameof(encryptionKey));
+                settings.EncryptionKey = configuration.GetChildren()
+                    .FirstOrDefault(x => x.Key == EncryptionKeyEnvironmentVariable)?.Value;
+            }
+            if (settings.SecretKey.Empty())
+            {
+                settings.SecretKey = configuration.GetChildren()
+                    .FirstOrDefault(x => x.Key == SecretKeyEnvironmentVariable)?.Value;
             }
 
-            settings.EncryptionKey = encryptionKey;
+            if (settings.EncryptionKey.Empty())
+                throw new ArgumentException("Lockbox encryption key can not be empty!", nameof(settings.EncryptionKey));
+            if (settings.SecretKey.Empty())
+                throw new ArgumentException("Lockbox secret key can not be empty!", nameof(settings.SecretKey));
+
 
             return settings;
         }
