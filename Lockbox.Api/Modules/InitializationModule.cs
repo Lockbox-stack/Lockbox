@@ -5,13 +5,13 @@ using Nancy.ModelBinding;
 
 namespace Lockbox.Api.Modules
 {
-    public class InitializationModule : NancyModule
+    public class InitializationModule : ModuleBase
     {
         public InitializationModule(IInitializationService initializationService)
         {
             Post("init", async args =>
             {
-                var request = this.Bind<InitializeLockbox>();
+                var request = BindRequest<InitializeLockbox>();
                 await initializationService.InitializeAsync(request.Username, request.Password);
 
                 return HttpStatusCode.NoContent;

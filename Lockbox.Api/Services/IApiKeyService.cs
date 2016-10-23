@@ -7,6 +7,6 @@ namespace Lockbox.Api.Services
     {
         Task<string> CreateAsync(string username, string password, TimeSpan? expiry = null);
         Task<bool> IsValidAsync(string apiKey);
-        Task RemoveAsync(string apiKey);
+        Task DeleteAsync(string apiKey);
     }
 }

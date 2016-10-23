@@ -13,17 +13,8 @@ namespace Lockbox.Api.IoC.Modules
             builder.Register((c, p) =>
             {
                 var settings = c.Resolve<MongoDbSettings>();
-                var mongoSettings = new MongoClientSettings
-                {
-                    Server = new MongoServerAddress(settings.Server, settings.Port),
-                    MaxConnectionIdleTime = TimeSpan.FromMinutes(settings.MaxConnectionIdleTimeMinutes)
-                };
-                var credential = MongoCredential.CreateCredential(settings.Database, settings.Username,
-                    settings.Password);
-                if (credential != null)
-                    mongoSettings.Credentials = new[] {credential};
 
-                return new MongoClient(mongoSettings);
+                return new MongoClient(settings.ConnectionString);
             }).SingleInstance();
 
             builder.Register((c, p) =>
@@ -34,7 +25,7 @@ namespace Lockbox.Api.IoC.Modules
                 return database;
             }).As<IMongoDatabase>();
 
-            builder.RegisterType<RecordRepository>().As<IRecordRepository>();
+            builder.RegisterType<EntryRepository>().As<IEntryRepository>();
             builder.RegisterType<UserRepository>().As<IUserRepository>();
         }
     }

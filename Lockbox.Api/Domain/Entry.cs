@@ -3,18 +3,19 @@ using Lockbox.Api.Extensions;
 
 namespace Lockbox.Api.Domain
 {
-    public class Record
+    public class Entry
     {
         public string Key { get; protected set; }
         public string Value { get; protected set; }
         public string Salt { get; protected set; }
+        public DateTime Expiry { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
 
-        protected Record()
+        protected Entry()
         {
         }
 
-        public Record(string key, string value, string salt)
+        public Entry(string key, string value, string salt, DateTime? expiry = null)
         {
             if (key.Empty())
                 throw new ArgumentException("Key can not be empty.", nameof(key));
@@ -26,6 +27,7 @@ namespace Lockbox.Api.Domain
             Key = key;
             Value = value;
             Salt = salt;
+            Expiry = expiry.GetValueOrDefault(DateTime.UtcNow.AddYears(100));
             CreatedAt = DateTime.UtcNow;
         }
     }

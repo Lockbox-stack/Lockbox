@@ -2,7 +2,7 @@
 
 namespace Lockbox.Api.Modules
 {
-    public class HomeModule : NancyModule
+    public class HomeModule : ModuleBase
     {
         public HomeModule()
         {

@@ -19,7 +19,7 @@ namespace Lockbox.Api.Services
         public async Task InitializeAsync(string username, string password)
         {
             var initialized = await _userRepository.AnyAsync();
-            if(initialized)
+            if (initialized)
                 throw new InvalidOperationException("Lockbox has been already initialized.");
 
             var user = new User(username, Role.Admin);

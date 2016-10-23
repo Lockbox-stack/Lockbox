@@ -31,17 +31,11 @@ namespace Lockbox.Api.Services
 
         public string GetFromAuthorizationHeader(string authorizationHeader)
         {
-            var data = authorizationHeader.Trim().Split(' ');
-            if (data.Length != 2)
-                return null;
-            if (data[0].Empty() || data[1].Empty())
-                return null;
+            var authorizationTypeAndToken = authorizationHeader.ParseAuthorzationHeader();
 
-            var authorizationType = data[0].ToLowerInvariant();
-            if (authorizationType != "bearer")
-                return null;
-
-            return data[1];
+            return authorizationTypeAndToken.Key != "bearer"
+                ? null
+                : authorizationTypeAndToken.Value;
         }
 
         public JwtToken Decode(string token)

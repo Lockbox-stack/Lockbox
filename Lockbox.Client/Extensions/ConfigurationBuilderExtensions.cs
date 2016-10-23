@@ -10,19 +10,19 @@ namespace Lockbox.Client.Extensions
     public static class ConfigurationBuilderExtensions
     {
         public static IConfigurationBuilder AddLockbox(this IConfigurationBuilder builder, string apiUrl, string apiKey,
-            string recordKey)
+            string entryKey)
         {
-            var lockboxClient = new LockboxClient(apiUrl, apiKey);
-            var record = lockboxClient.GetComplexRecordAsync(recordKey).Result;
-            if (record == null)
+            var lockboxClient = new LockboxEntryClient(apiUrl, apiKey);
+            var entryDictionary = lockboxClient.GetEntryAsDictionaryAsync(entryKey).Result;
+            if (entryDictionary == null)
             {
-                throw new ArgumentException($"Lockbox record has not been found for key: '{recordKey}'.", nameof(recordKey));
+                throw new ArgumentException($"Lockbox entry has not been found for key: '{entryKey}'.", nameof(entryKey));
             }
 
-            var data = from recordEntry in record
-                from entry in recordEntry.Value as IEnumerable<object>
+            var data = from entryPair in entryDictionary
+                from entry in entryPair.Value as IEnumerable<object>
                 let property = (JProperty) entry
-                select new KeyValuePair<string, string>($"{recordEntry.Key}:{property.Name}", property.Value.ToString());
+                select new KeyValuePair<string, string>($"{entryPair.Key}:{property.Name}", property.Value.ToString());
 
             var source = new MemoryConfigurationSource {InitialData = data};
             builder.Add(source);

@@ -25,7 +25,8 @@ namespace Lockbox.Api.Services
             var user = await _userRepository.GetAsync(username);
             if (user == null)
                 throw new ArgumentNullException(nameof(user), $"User {username} has not been found.");
-
+            if (!user.IsActive)
+                throw new AuthenticationException($"User {username} is not active.");
             if (!user.ValidatePassword(password, _encrypter))
                 throw new AuthenticationException($"Invalid credentials for user {username}.");
 
@@ -45,13 +46,15 @@ namespace Lockbox.Api.Services
             return user.IsActive && user.ApiKeys.Contains(apiKey);
         }
 
-        public async Task RemoveAsync(string apiKey)
+        public async Task DeleteAsync(string apiKey)
         {
             var user = await _userRepository.GetByApiKeyAsync(apiKey);
             if (user == null)
                 throw new ArgumentNullException(nameof(user), "User has not been found for given API key.");
+            if (!user.IsActive)
+                throw new AuthenticationException($"User {user.Username} is not active.");
 
-            user.RemoveApiKey(apiKey);
+            user.DeleteApiKey(apiKey);
             await _userRepository.UpdateAsync(user);
         }
     }

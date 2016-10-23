@@ -1,8 +1,9 @@
-﻿namespace Lockbox.Api.Requests
+﻿using System;
+
+namespace Lockbox.Api.Requests
 {
-    public class CreateApiKey
+    public class CreateApiKey : BasicAuthenticationRequest
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public TimeSpan? Expiry { get; set; }
     }
 }
