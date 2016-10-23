@@ -1,11 +1,8 @@
-﻿using System;
-using System.Security.Authentication;
-using System.Text;
-using Lockbox.Api.Extensions;
-using Lockbox.Api.Requests;
+﻿using System.Security.Claims;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses.Negotiation;
+using Nancy.Security;
 
 namespace Lockbox.Api.Modules
 {
@@ -15,31 +12,18 @@ namespace Lockbox.Api.Modules
         {
         }
 
-        protected T BindRequest<T>() => this.Bind<T>();
-
-        protected T BindBasicAuthenticationRequest<T>() where T : BasicAuthenticationRequest
+        protected void RequiresAdmin()
         {
-            var request = BindRequest<T>();
-            var authorizationTypeAndToken = Context.Request.Headers.Authorization.ParseAuthorzationHeader();
-            if (authorizationTypeAndToken.Key != "basic")
-                throw new AuthenticationException("Basic authentication header has not been found.");
-
-            var encodedToken = Convert.FromBase64String(authorizationTypeAndToken.Value);
-            var decodedToken = Encoding.UTF8.GetString(encodedToken);
-            if (!decodedToken.Contains(":"))
-                throw new AuthenticationException("Invalid authentication header.");
-
-            var tokenValues = decodedToken.Split(':');
-            request.Username = tokenValues[0];
-            request.Password = tokenValues[1];
-
-            return request;
+            this.RequiresAuthentication();
+            this.RequiresClaims(x => x.Type == ClaimTypes.Role && x.Value == "admin");
         }
+
+        protected T BindRequest<T>() => this.Bind<T>();
 
         protected string CurrentUsername => Context.CurrentUser.Identity.Name;
 
         protected Negotiator Created(string endpoint)
-            => Negotiate.WithHeader("Location", $"{Request.Url.SiteBase}{endpoint}")
+            => Negotiate.WithHeader("Location", $"{Request.Url.SiteBase}/{endpoint}")
                 .WithStatusCode(HttpStatusCode.Created);
     }
 }

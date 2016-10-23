@@ -1,6 +1,7 @@
 ﻿using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
 using Nancy;
+using Nancy.Security;
 
 namespace Lockbox.Api.Modules
 {
@@ -8,11 +9,12 @@ namespace Lockbox.Api.Modules
     {
         public ApiKeyModule(IApiKeyService apiKeyService) : base("api-keys")
         {
+            this.RequiresAuthentication();
+
             Post("", async args =>
             {
-                var request = BindBasicAuthenticationRequest<CreateApiKey>();
-                var apiKey = await apiKeyService.CreateAsync(request.Username, request.Password,
-                    request.Expiry);
+                var request = BindRequest<CreateApiKey>();
+                var apiKey = await apiKeyService.CreateAsync(CurrentUsername, request.Expiry);
 
                 return new {apiKey};
             });

@@ -4,6 +4,6 @@ namespace Lockbox.Api.Services
 {
     public interface IInitializationService
     {
-        Task InitializeAsync(string username, string password);
+        Task<string> InitializeAsync(string username, string password);
     }
 }

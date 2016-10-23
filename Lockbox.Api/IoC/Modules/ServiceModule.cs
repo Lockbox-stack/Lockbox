@@ -14,6 +14,7 @@ namespace Lockbox.Api.IoC.Modules
             builder.RegisterType<JwtTokenHandler>().As<IJwtTokenHandler>().SingleInstance();
             builder.RegisterType<EntryService>().As<IEntryService>();
             builder.RegisterType<EntryPermissionService>().As<IEntryPermissionService>();
+            builder.RegisterType<UserService>().As<IUserService>();
         }
     }
 }

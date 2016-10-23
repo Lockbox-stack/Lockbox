@@ -16,7 +16,7 @@ namespace Lockbox.Examples.WebApp
         {
             var builder = new ConfigurationBuilder()
                 .AddLockbox("http://localhost:5000",
-                "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJTdWIiOiJzcGV0eiIsIkV4cCI6NjY3Njg0NzcwMjEyNDIyOTc1fQ._01iOCc_pIWqxr0673wKVSIPzcNSxair7D0FKOr611laA9MT-fDlRG0kb_QfEu-uLklpW_-9_kvUR6K5AwGb7A", 
+                "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJTdWIiOiJ3ZWJhcHAiLCJFeHAiOjY2NzY4NDk0NDU5NjMyMzc5Mn0.TnJfzZ8UzMQ13LcXdMtKbbQYzkujejSSFVo36o8F36v51uTqJwuZc4tUh8oEN99z3DPhmDjDyKucrG5JRkxbIA", 
                 "config");
 
             Configuration = builder.Build();

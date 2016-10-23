@@ -7,7 +7,7 @@
     "projectUrl": "https://github.com/spetz/Lockbox",
     "licenseUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE"
   },
-  "version": "0.1.0-alpha-*",
+  "version": "1.0.0-alpha-1",
   "dependencies": {
     "NETStandard.Library": "1.6.0",
     "Autofac": "4.1.0",
@@ -17,6 +17,7 @@
     "Microsoft.AspNetCore.Hosting": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
     "Microsoft.AspNetCore.Owin": "1.0.0",
+    "Microsoft.AspNetCore.Cors": "1.0.0",
     "Microsoft.Extensions.Caching.Memory": "1.0.0",
     "Microsoft.Extensions.Configuration.Binder": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0",

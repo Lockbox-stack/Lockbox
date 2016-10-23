@@ -22,7 +22,7 @@ namespace Lockbox.Api.Services
 
         public async Task<object> GetValueAsync(string key)
         {
-            var entry = await _entryRepository.GetAsync(GetFixedKey(key));
+            var entry = await _entryRepository.GetAsync(key);
             if (entry == null)
                 return null;
             if (entry.Expiry <= DateTime.UtcNow)
@@ -36,28 +36,24 @@ namespace Lockbox.Api.Services
         public async Task<IEnumerable<string>> GetKeysAsync()
             => await _entryRepository.GetKeysAsync();
 
-        public async Task CreateAsync(string key, object value)
+        public async Task CreateAsync(string key, object value, string author)
         {
             await DeleteAsync(key);
-            var fixedKey = GetFixedKey(key);
             var randomSecureKey = _encrypter.GetRandomSecureKey();
             var salt = _encrypter.GetSalt(randomSecureKey);
             var serializedValue = JsonConvert.SerializeObject(value);
             var encryptedValue = _encrypter.Encrypt(serializedValue, salt, _lockboxSettings.EncryptionKey);
-            var entry = new Entry(fixedKey, encryptedValue, salt);
+            var entry = new Entry(key, encryptedValue, salt, author);
             await _entryRepository.AddAsync(entry);
         }
 
         public async Task DeleteAsync(string key)
         {
-            var fixedKey = GetFixedKey(key);
-            var entry = await _entryRepository.GetAsync(fixedKey);
+            var entry = await _entryRepository.GetAsync(key);
             if (entry == null)
                 return;
 
-            await _entryRepository.DeleteAsync(fixedKey);
+            await _entryRepository.DeleteAsync(key);
         }
-
-        private string GetFixedKey(string key) => key?.ToLowerInvariant();
     }
 }

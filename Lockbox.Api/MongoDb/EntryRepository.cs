@@ -17,7 +17,7 @@ namespace Lockbox.Api.MongoDb
         }
 
         public async Task<Entry> GetAsync(string key)
-            => await Entries().AsQueryable().FirstOrDefaultAsync(x => x.Key == key);
+            => await Entries().AsQueryable().FirstOrDefaultAsync(x => x.Key == key.ToLowerInvariant());
 
         public async Task<IEnumerable<string>> GetKeysAsync()
             => await Entries().AsQueryable().Select(x => x.Key).ToListAsync();
@@ -26,7 +26,7 @@ namespace Lockbox.Api.MongoDb
             => await Entries().InsertOneAsync(entry);
 
         public async Task DeleteAsync(string key)
-            => await Entries().DeleteOneAsync(x => x.Key == key);
+            => await Entries().DeleteOneAsync(x => x.Key == key.ToLowerInvariant());
 
         private IMongoCollection<Entry> Entries()
             => _database.GetCollection<Entry>("Entries");

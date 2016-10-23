@@ -2,7 +2,7 @@
 
 namespace Lockbox.Api.Requests
 {
-    public class CreateApiKey : BasicAuthenticationRequest
+    public class CreateApiKey
     {
         public TimeSpan? Expiry { get; set; }
     }

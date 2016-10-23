@@ -1,7 +1,5 @@
 ﻿using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
-using Nancy;
-using Nancy.ModelBinding;
 
 namespace Lockbox.Api.Modules
 {
@@ -12,9 +10,9 @@ namespace Lockbox.Api.Modules
             Post("init", async args =>
             {
                 var request = BindRequest<InitializeLockbox>();
-                await initializationService.InitializeAsync(request.Username, request.Password);
+                var apiKey = await initializationService.InitializeAsync(request.Username, request.Password);
 
-                return HttpStatusCode.NoContent;
+                return new { apiKey };
             });
         }
     }

@@ -1,0 +1,22 @@
+﻿{
+  "name": "Lockbox.Tests",
+  "authors": [ "Piotr Gankiewicz" ],
+  "title": "Lockbox.Tests",
+  "description": "Lockbox Tests.",
+  "packOptions": {
+    "projectUrl": "https://github.com/spetz/Lockbox",
+    "licenseUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE"
+  },
+  "version": "1.0.0-alpha-1",
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50"
+      ]
+    }
+  }
+}

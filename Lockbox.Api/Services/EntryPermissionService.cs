@@ -36,7 +36,7 @@ namespace Lockbox.Api.Services
         public async Task CreateAsync(string username, string key, object value)
         {
             await ValidatePermission(username, Permission.CreateEntry);
-            await _entryService.CreateAsync(key, value);
+            await _entryService.CreateAsync(key, value, username);
         }
 
         public async Task DeleteAsync(string username, string key)

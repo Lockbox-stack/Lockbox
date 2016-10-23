@@ -8,7 +8,7 @@
     "licenseUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE",
     "packageType": "DotnetCliTool"
   },
-  "version": "0.1.0-alpha-*",
+  "version": "1.0.0-alpha-1",
   "dependencies": {
     "NETStandard.Library": "1.6.0",
     "Microsoft.Extensions.Configuration.Binder": "1.0.0",

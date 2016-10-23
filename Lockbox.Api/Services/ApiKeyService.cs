@@ -11,24 +11,23 @@ namespace Lockbox.Api.Services
     {
         private readonly IJwtTokenHandler _jwtTokenHandler;
         private readonly IUserRepository _userRepository;
-        private readonly IEncrypter _encrypter;
 
-        public ApiKeyService(IJwtTokenHandler jwtTokenHandler, IEncrypter encrypter, IUserRepository userRepository)
+        public ApiKeyService(IJwtTokenHandler jwtTokenHandler, IUserRepository userRepository)
         {
             _jwtTokenHandler = jwtTokenHandler;
             _userRepository = userRepository;
-            _encrypter = encrypter;
         }
 
-        public async Task<string> CreateAsync(string username, string password, TimeSpan? expiry = null)
+        public async Task<User> GetUserAsync(string apiKey)
+            => await _userRepository.GetByApiKeyAsync(apiKey);
+
+        public async Task<string> CreateAsync(string username, TimeSpan? expiry = null)
         {
             var user = await _userRepository.GetAsync(username);
             if (user == null)
                 throw new ArgumentNullException(nameof(user), $"User {username} has not been found.");
             if (!user.IsActive)
                 throw new AuthenticationException($"User {username} is not active.");
-            if (!user.ValidatePassword(password, _encrypter))
-                throw new AuthenticationException($"Invalid credentials for user {username}.");
 
             var apiKey = _jwtTokenHandler.Create(username, expiry);
             user.AddApiKey(apiKey);
@@ -37,9 +36,8 @@ namespace Lockbox.Api.Services
             return apiKey;
         }
 
-        public async Task<bool> IsValidAsync(string apiKey)
+        public bool IsValid(User user, string apiKey)
         {
-            var user = await _userRepository.GetByApiKeyAsync(apiKey);
             if (user == null)
                 return false;
 
@@ -53,6 +51,8 @@ namespace Lockbox.Api.Services
                 throw new ArgumentNullException(nameof(user), "User has not been found for given API key.");
             if (!user.IsActive)
                 throw new AuthenticationException($"User {user.Username} is not active.");
+            if (user.ApiKeys.Count() == 1)
+                throw new InvalidOperationException("You must have at least one API key.");
 
             user.DeleteApiKey(apiKey);
             await _userRepository.UpdateAsync(user);

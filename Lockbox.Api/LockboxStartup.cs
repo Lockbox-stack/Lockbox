@@ -34,6 +34,7 @@ namespace Lockbox.Api
         public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddWebEncoders();
+            services.AddCors();
             ApplicationContainer = GetServiceContainer(services);
 
             return new AutofacServiceProvider(ApplicationContainer);
@@ -43,6 +44,10 @@ namespace Lockbox.Api
         {
             loggerFactory.AddNLog();
             env.ConfigureNLog("nlog.config");
+            app.UseCors(builder => builder.AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowAnyOrigin()
+               .AllowCredentials());
             app.UseOwin().UseNancy(x => x.Bootstrapper = new Bootstrapper(Configuration));
         }
 

@@ -7,7 +7,7 @@ namespace Lockbox.Api.Services
     {
         Task<object> GetValueAsync(string key);
         Task<IEnumerable<string>> GetKeysAsync();
-        Task CreateAsync(string key, object value);
+        Task CreateAsync(string key, object value, string author);
         Task DeleteAsync(string key);
     }
 }
