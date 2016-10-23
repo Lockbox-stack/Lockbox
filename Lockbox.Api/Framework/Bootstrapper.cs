@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using Lockbox.Core.IoC;
-using Lockbox.Core.MongoDb;
+using Lockbox.Api.IoC;
+using Lockbox.Api.MongoDb;
 using Microsoft.Extensions.Configuration;
 using Nancy.Bootstrapper;
 using NLog;

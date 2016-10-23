@@ -7,8 +7,8 @@
 
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>c1407eb5-ec88-4903-b4f3-6d072ce177b1</ProjectGuid>
-    <RootNamespace>Lockbox.Core</RootNamespace>
+    <ProjectGuid>8a24cbf2-e362-4933-a5d5-cc3029f95ec3</ProjectGuid>
+    <RootNamespace>Lockbox.Examples.Api</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>

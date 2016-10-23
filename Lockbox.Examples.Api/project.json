@@ -1,8 +1,8 @@
 ﻿{
-  "name": "Lockbox.Examples.WebApp",
+  "name": "Lockbox.Examples.Api",
   "authors": [ "Piotr Gankiewicz" ],
-  "title": "Lockbox.Examples.WebApp",
-  "description": "An example of Lockbox.Client used in web application.",
+  "title": "Lockbox.Examples.Api",
+  "description": "An example of Lockbox.Api used in web application.",
   "packOptions": {
     "projectUrl": "https://github.com/spetz/Lockbox",
     "licenseUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE"
@@ -16,15 +16,19 @@
       "type": "platform",
       "version": "1.0.0"
     },
-    "Lockbox.Client": "0.1.0-*",
+    "NETStandard.Library": "1.6.0",
+    "Lockbox.Api": "0.1.0-*",
+    "Autofac": "4.1.0",
+    "Autofac.Extensions.DependencyInjection": "4.0.0",
+    "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0",
     "Microsoft.AspNetCore.Hosting": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
     "Microsoft.AspNetCore.Owin": "1.0.0",
-    "Microsoft.AspNetCore.Mvc": "1.0.0",
     "Microsoft.Extensions.Caching.Memory": "1.0.0",
     "Microsoft.Extensions.Configuration.Binder": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
-    "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0"
+    "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
+    "NLog.Extensions.Logging": "1.0.0-*"
   },
   "frameworks": {
     "netcoreapp1.0": {

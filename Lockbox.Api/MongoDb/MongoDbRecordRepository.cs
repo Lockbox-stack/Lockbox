@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Lockbox.Core.Domain;
-using Lockbox.Core.Repositories;
+using Lockbox.Api.Domain;
+using Lockbox.Api.Repositories;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace Lockbox.Core.MongoDb
+namespace Lockbox.Api.MongoDb
 {
     public class MongoDbRecordRepository : IRecordRepository
     {

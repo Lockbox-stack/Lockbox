@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Lockbox.Core.Domain;
+using Lockbox.Api.Domain;
 
-namespace Lockbox.Core.Repositories
+namespace Lockbox.Api.Repositories
 {
     public interface IRecordRepository
     {

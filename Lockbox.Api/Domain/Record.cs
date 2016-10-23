@@ -1,4 +1,4 @@
-﻿namespace Lockbox.Core.Domain
+﻿namespace Lockbox.Api.Domain
 {
     public class Record
     {

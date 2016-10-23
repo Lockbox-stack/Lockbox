@@ -1,4 +1,4 @@
-﻿using Lockbox.Core.Services;
+﻿using Lockbox.Api.Services;
 using Nancy;
 
 namespace Lockbox.Api.Modules

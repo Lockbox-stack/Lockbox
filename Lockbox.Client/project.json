@@ -2,15 +2,15 @@
   "name": "Lockbox.Client",
   "authors": [ "Piotr Gankiewicz" ],
   "title": "Lockbox.Client",
+  "description": "Lockbox Client.",
   "packOptions": {
     "projectUrl": "https://github.com/spetz/Lockbox",
     "licenseUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE",
     "packageType": "DotnetCliTool"
   },
-  "version": "1.0.0-*",
+  "version": "0.1.0-alpha-*",
   "dependencies": {
     "NETStandard.Library": "1.6.0",
-    "Lockbox.Core": "1.0.0-*",
     "Microsoft.Extensions.Configuration.Binder": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0"
   },
@@ -21,5 +21,10 @@
         "dnxcore50"
       ]
     }
+  },
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration%"
+    ]
   }
 }

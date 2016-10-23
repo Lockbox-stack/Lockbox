@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Lockbox.Core")]
+[assembly: AssemblyProduct("Lockbox.Examples.Api")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -16,4 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c1407eb5-ec88-4903-b4f3-6d072ce177b1")]
+[assembly: Guid("8a24cbf2-e362-4933-a5d5-cc3029f95ec3")]

@@ -1,7 +1,8 @@
 ﻿using System.IO;
+using Lockbox.Api;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Lockbox.Api
+namespace Lockbox.Examples.Api
 {
     public class Program
     {
@@ -10,7 +11,8 @@ namespace Lockbox.Api
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseStartup<Startup>()
+                .UseStartup<LockboxStartup>()
+                .UseUrls("http://*:5000")
                 .UseIISIntegration()
                 .Build();
 

@@ -13,22 +13,25 @@ using NLog.Extensions.Logging;
 
 namespace Lockbox.Api
 {
-    public class Startup
+    public class LockboxStartup
     {
-        public IConfiguration Configuration { get; set; }
-        public IContainer ApplicationContainer { get; set; }
+        protected string EnvironmentName { get; set; }
+        protected IConfiguration Configuration { get; set; }
+        protected IContainer ApplicationContainer { get; set; }
 
-        public Startup(IHostingEnvironment env)
+        public LockboxStartup(IHostingEnvironment env)
         {
+            EnvironmentName = env.EnvironmentName.ToLowerInvariant();
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables()
                 .SetBasePath(env.ContentRootPath);
 
             Configuration = builder.Build();
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddWebEncoders();
             ApplicationContainer = GetServiceContainer(services);
@@ -36,7 +39,7 @@ namespace Lockbox.Api
             return new AutofacServiceProvider(ApplicationContainer);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddNLog();
             env.ConfigureNLog("nlog.config");

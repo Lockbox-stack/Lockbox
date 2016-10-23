@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Conventions;
 
-namespace Lockbox.Core.MongoDb
+namespace Lockbox.Api.MongoDb
 {
     public static class MongoConfigurator
     {

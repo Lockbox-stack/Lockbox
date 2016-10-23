@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Lockbox.Core.Services
+namespace Lockbox.Api.Services
 {
     public interface IRecordService
     {

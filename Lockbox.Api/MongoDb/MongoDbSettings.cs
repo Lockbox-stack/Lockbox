@@ -1,4 +1,4 @@
-﻿namespace Lockbox.Core.Settings
+﻿namespace Lockbox.Api.MongoDb
 {
     public class MongoDbSettings
     {

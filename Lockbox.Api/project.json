@@ -2,21 +2,14 @@
   "name": "Lockbox.Api",
   "authors": [ "Piotr Gankiewicz" ],
   "title": "Lockbox.Api",
+  "description": "Lockbox API.",
   "packOptions": {
     "projectUrl": "https://github.com/spetz/Lockbox",
     "licenseUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE"
   },
-  "version": "1.0.0-*",
-  "buildOptions": {
-    "emitEntryPoint": true
-  },
+  "version": "0.1.0-alpha-*",
   "dependencies": {
-    "Microsoft.NETCore.App": {
-      "type": "platform",
-      "version": "1.0.0"
-    },
     "NETStandard.Library": "1.6.0",
-    "Lockbox.Core": "1.0.0-*", 
     "Autofac": "4.1.0",
     "Autofac.Extensions.DependencyInjection": "4.0.0",
     "jose-jwt": "2.0.2",
@@ -30,7 +23,11 @@
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Nancy": "2.0.0-barneyrubble",
     "Nancy.Authentication.Stateless": "2.0.0-barneyrubble",
-    "NLog.Extensions.Logging": "1.0.0-*"
+    "MongoDB.Driver": "2.3.0",
+    "Newtonsoft.Json": "9.0.1",
+    "NLog.Extensions.Logging": "1.0.0-*",
+    "System.Reflection": "4.1.0",
+    "System.Reflection.TypeExtensions": "4.1.0"
   },
   "frameworks": {
     "netcoreapp1.0": {
@@ -39,5 +36,10 @@
         "dnxcore50"
       ]
     }
+  },
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration%"
+    ]
   }
 }

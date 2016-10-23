@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Lockbox.Core.Repositories;
+using Lockbox.Api.Repositories;
 
-namespace Lockbox.Core.Services
+namespace Lockbox.Api.Services
 {
     public class RecordService : IRecordService
     {
