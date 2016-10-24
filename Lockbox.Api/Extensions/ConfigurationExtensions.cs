@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using Lockbox.Api.MongoDb;
 using Microsoft.Extensions.Configuration;
 
 namespace Lockbox.Api.Extensions
@@ -8,6 +8,8 @@ namespace Lockbox.Api.Extensions
     {
         private static readonly string EncryptionKeyEnvironmentVariable = "LOCKBOX_ENCRYPTION_KEY";
         private static readonly string SecretKeyEnvironmentVariable = "LOCKBOX_SECRET_KEY";
+        private static readonly string MongoConnectionStringEnvironmentVariable = "LOCKBOX_MONGO_CONNECTION_STRING";
+        private static readonly string MongoDatabaseEnvironmentVariable = "LOCKBOX_MONGO_DATABASE";
 
         public static T GetSettings<T>(this IConfiguration configuration, string section = "") where T : class, new()
         => GetSettings(configuration, typeof(T), section) as T;
@@ -22,9 +24,12 @@ namespace Lockbox.Api.Extensions
             var configurationValue = Activator.CreateInstance(type);
             configuration.GetSection(section).Bind(configurationValue);
 
-            return type == typeof(LockboxSettings)
-                ? InitializeLockboxSettings(configurationValue as LockboxSettings)
-                : configurationValue;
+            if (type == typeof(LockboxSettings))
+                return InitializeLockboxSettings(configurationValue as LockboxSettings);
+            if (type == typeof(MongoDbSettings))
+                return InitializeMongoDbSettings(configurationValue as MongoDbSettings);
+
+            return configurationValue;
         }
 
         private static LockboxSettings InitializeLockboxSettings(LockboxSettings settings)
@@ -33,6 +38,16 @@ namespace Lockbox.Api.Extensions
                 EncryptionKeyEnvironmentVariable, "encryption key");
             settings.SecretKey = GetParameterOrFail(settings.SecretKey,
                 SecretKeyEnvironmentVariable, "secret key");
+
+            return settings;
+        }
+
+        private static MongoDbSettings InitializeMongoDbSettings(MongoDbSettings settings)
+        {
+            settings.ConnectionString = GetParameterOrFail(settings.ConnectionString,
+                MongoConnectionStringEnvironmentVariable, "connection string");
+            settings.Database = GetParameterOrFail(settings.Database,
+                MongoDatabaseEnvironmentVariable, "database");
 
             return settings;
         }
