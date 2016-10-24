@@ -4,8 +4,8 @@
   "title": "Lockbox.Tests",
   "description": "Lockbox Tests.",
   "packOptions": {
-    "projectUrl": "https://github.com/spetz/Lockbox",
-    "licenseUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE"
+    "projectUrl": "https://github.com/Lockbox-stack/Lockbox",
+    "licenseUrl": "https://github.com/Lockbox-stack/Lockbox/blob/master/README.md"
   },
   "version": "1.0.0-alpha-1",
   "dependencies": {
