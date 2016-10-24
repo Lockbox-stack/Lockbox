@@ -23,30 +23,27 @@ namespace Lockbox.Api.Extensions
             configuration.GetSection(section).Bind(configurationValue);
 
             return type == typeof(LockboxSettings)
-                ? InitializeLockboxSettings(configurationValue as LockboxSettings, configuration)
+                ? InitializeLockboxSettings(configurationValue as LockboxSettings)
                 : configurationValue;
         }
 
-        private static LockboxSettings InitializeLockboxSettings(LockboxSettings settings, IConfiguration configuration)
+        private static LockboxSettings InitializeLockboxSettings(LockboxSettings settings)
         {
-            if (settings.EncryptionKey.Empty())
-            {
-                settings.EncryptionKey = configuration.GetChildren()
-                    .FirstOrDefault(x => x.Key == EncryptionKeyEnvironmentVariable)?.Value;
-            }
-            if (settings.SecretKey.Empty())
-            {
-                settings.SecretKey = configuration.GetChildren()
-                    .FirstOrDefault(x => x.Key == SecretKeyEnvironmentVariable)?.Value;
-            }
-
-            if (settings.EncryptionKey.Empty())
-                throw new ArgumentException("Lockbox encryption key can not be empty!", nameof(settings.EncryptionKey));
-            if (settings.SecretKey.Empty())
-                throw new ArgumentException("Lockbox secret key can not be empty!", nameof(settings.SecretKey));
-
+            settings.EncryptionKey = GetParameterOrFail(settings.EncryptionKey,
+                EncryptionKeyEnvironmentVariable, "encryption key");
+            settings.SecretKey = GetParameterOrFail(settings.SecretKey,
+                SecretKeyEnvironmentVariable, "secret key");
 
             return settings;
+        }
+
+        private static string GetParameterOrFail(string parameter, string environmentVariable, string parameterName)
+        {
+            parameter = parameter.Empty() ? Environment.GetEnvironmentVariable(environmentVariable) : parameter;
+            if (parameter.NotEmpty())
+                return parameter;
+
+            throw new ArgumentException($"Lockbox {parameterName} can not be empty!", nameof(parameter));
         }
     }
 }

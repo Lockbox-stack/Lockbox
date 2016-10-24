@@ -9,9 +9,16 @@ namespace Lockbox.Client.Extensions
 {
     public static class ConfigurationBuilderExtensions
     {
-        public static IConfigurationBuilder AddLockbox(this IConfigurationBuilder builder, string apiUrl, string apiKey,
-            string entryKey)
+        private static readonly string ApiUrlEnvironmentVariable = "LOCKBOX_API_URL";
+        private static readonly string ApiKeyEnvironmentVariable = "LOCKBOX_API_KEY";
+        private static readonly string EntryKeyEnvironmentVariable = "LOCKBOX_ENTRY_KEY";
+
+        public static IConfigurationBuilder AddLockbox(this IConfigurationBuilder builder,
+            string apiUrl = null, string apiKey = null, string entryKey = null)
         {
+            apiUrl = GetParameterOrFail(apiKey, ApiUrlEnvironmentVariable, "API key");
+            apiKey = GetParameterOrFail(apiKey, ApiKeyEnvironmentVariable, "API url");
+            entryKey = GetParameterOrFail(apiKey, EntryKeyEnvironmentVariable, "entry key");
             var lockboxClient = new LockboxEntryClient(apiUrl, apiKey);
             var entryDictionary = lockboxClient.GetEntryAsDictionaryAsync(entryKey).Result;
             if (entryDictionary == null)
@@ -28,6 +35,15 @@ namespace Lockbox.Client.Extensions
             builder.Add(source);
 
             return builder;
+        }
+
+        private static string GetParameterOrFail(string parameter, string environmentVariable, string parameterName)
+        {
+            parameter = parameter.Empty() ? Environment.GetEnvironmentVariable(environmentVariable) : parameter;
+            if (parameter.NotEmpty())
+                return parameter;
+
+            throw new ArgumentException($"Lockbox {parameterName} can not be empty!", nameof(parameter));
         }
     }
 }
