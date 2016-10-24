@@ -7,7 +7,7 @@
     "projectUrl": "https://github.com/Lockbox-stack/Lockbox",
     "licenseUrl": "https://github.com/Lockbox-stack/Lockbox/blob/master/README.md"
   },
-  "version": "1.0.0-alpha-1.1",
+  "version": "1.0.0-alpha-2",
   "dependencies": {
     "NETStandard.Library": "1.6.0",
     "Autofac": "4.1.0",
