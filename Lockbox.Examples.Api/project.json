@@ -4,8 +4,8 @@
   "title": "Lockbox.Examples.Api",
   "description": "An example of Lockbox.Api used in web application.",
   "packOptions": {
-    "projectUrl": "https://github.com/spetz/Lockbox",
-    "licenseUrl": "https://github.com/spetz/Lockbox/blob/master/LICENSE"
+    "projectUrl": "https://github.com/Lockbox-stack/Lockbox",
+    "licenseUrl": "https://github.com/Lockbox-stack/Lockbox/blob/master/README.md"
   },
   "version": "1.0.0-*",
   "buildOptions": {
