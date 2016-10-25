@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
 using Nancy;
@@ -30,7 +31,7 @@ namespace Lockbox.Api.Modules
                     role = user.Role,
                     isActive = user.IsActive,
                     apiKeys = user.ApiKeys,
-                    permissions = user.Permissions
+                    permissions = user.Permissions.Select(x => x.ToString()).ToList()
                 };
             });
 

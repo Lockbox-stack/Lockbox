@@ -37,8 +37,6 @@ namespace Lockbox.Api.Services
             user.Activate();
             user.AddPermission(Permission.ReadEntryKeys);
             user.AddPermission(Permission.ReadEntry);
-            user.AddPermission(Permission.CreateEntry);
-            user.AddPermission(Permission.DeleteEntry);
             await _userRepository.AddAsync(user);
             await _apiKeyService.CreateAsync(username);
         }

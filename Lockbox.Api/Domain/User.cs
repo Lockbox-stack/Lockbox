@@ -125,5 +125,14 @@ namespace Lockbox.Api.Domain
             _permissions.Add(permission);
             UpdatedAt = DateTime.UtcNow;
         }
+
+        public void DeleteAllPermissions()
+        {
+            if(!_permissions.Any())
+                return;
+
+            _permissions.Clear();
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }
