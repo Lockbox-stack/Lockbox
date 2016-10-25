@@ -16,9 +16,9 @@ namespace Lockbox.Client.Extensions
         public static IConfigurationBuilder AddLockbox(this IConfigurationBuilder builder,
             string apiUrl = null, string apiKey = null, string entryKey = null)
         {
-            apiUrl = GetParameterOrFail(apiKey, ApiUrlEnvironmentVariable, "API key");
+            apiUrl = GetParameterOrFail(apiUrl, ApiUrlEnvironmentVariable, "API key");
             apiKey = GetParameterOrFail(apiKey, ApiKeyEnvironmentVariable, "API url");
-            entryKey = GetParameterOrFail(apiKey, EntryKeyEnvironmentVariable, "entry key");
+            entryKey = GetParameterOrFail(entryKey, EntryKeyEnvironmentVariable, "entry key");
             var lockboxClient = new LockboxEntryClient(apiUrl, apiKey);
             var entryDictionary = lockboxClient.GetEntryAsDictionaryAsync(entryKey).Result;
             if (entryDictionary == null)
