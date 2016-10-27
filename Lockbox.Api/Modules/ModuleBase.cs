@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses.Negotiation;
@@ -21,6 +23,11 @@ namespace Lockbox.Api.Modules
         protected T BindRequest<T>() => this.Bind<T>();
 
         protected string CurrentUsername => Context.CurrentUser.Identity.Name;
+
+        protected string EncryptionKey =>
+            Context.Request.Headers.FirstOrDefault(x =>
+                        x.Key.Equals("X-Encryption-Key", StringComparison.CurrentCultureIgnoreCase))
+                .Value?.FirstOrDefault() ?? string.Empty;
 
         protected Negotiator Created(string endpoint)
             => Negotiate.WithHeader("Location", $"{Request.Url.SiteBase}/{endpoint}")

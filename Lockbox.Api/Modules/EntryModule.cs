@@ -21,7 +21,8 @@ namespace Lockbox.Api.Modules
 
             Get("{key}", async args =>
             {
-                var entry = await entryPermissionService.GetValueAsync(CurrentUsername, (string) args.key);
+                var entry = await entryPermissionService.GetValueAsync(CurrentUsername,
+                    (string) args.key, EncryptionKey);
 
                 return entry ?? HttpStatusCode.NotFound;
             });
@@ -29,14 +30,15 @@ namespace Lockbox.Api.Modules
             Post("", async args =>
             {
                 var request = BindRequest<CreateEntry>();
-                await entryPermissionService.CreateAsync(CurrentUsername, request.Key, request.Value);
+                await entryPermissionService.CreateAsync(CurrentUsername,
+                    request.Key, request.Value, EncryptionKey);
 
                 return Created($"entries/{request.Key}");
             });
 
             Delete("{key}", async args =>
             {
-                await entryPermissionService.DeleteAsync(CurrentUsername, (string)args.key);
+                await entryPermissionService.DeleteAsync(CurrentUsername, (string) args.key);
 
                 return HttpStatusCode.NoContent;
             });

@@ -6,9 +6,10 @@ namespace Lockbox.Client
 {
     public class LockboxEntryClient : LockboxClientBase, ILockboxEntryClient
     {
-        public LockboxEntryClient(string apiUrl, string apiKey)
+        public LockboxEntryClient(string encryptionKey, string apiUrl, string apiKey)
             : base(apiUrl, "Bearer", apiKey)
         {
+            HttpClient.DefaultRequestHeaders.Add("X-Encryption-Key", encryptionKey);
         }
 
         public async Task<IEnumerable<string>> GetEntryKeysAsync()

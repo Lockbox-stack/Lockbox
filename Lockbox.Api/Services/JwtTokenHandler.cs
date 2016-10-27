@@ -48,7 +48,7 @@ namespace Lockbox.Api.Services
             {
                 Logger.Error(exception, "JWT Token generation error.");
 
-                return null;
+                throw;
             }
         }
 

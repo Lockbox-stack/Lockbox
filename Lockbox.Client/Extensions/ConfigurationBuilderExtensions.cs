@@ -9,28 +9,28 @@ namespace Lockbox.Client.Extensions
 {
     public static class ConfigurationBuilderExtensions
     {
+        private static readonly string EncryptionKeyEnvironmentVariable = "LOCKBOX_ENCRYPTION_KEY";
         private static readonly string ApiUrlEnvironmentVariable = "LOCKBOX_API_URL";
         private static readonly string ApiKeyEnvironmentVariable = "LOCKBOX_API_KEY";
         private static readonly string EntryKeyEnvironmentVariable = "LOCKBOX_ENTRY_KEY";
 
         public static IConfigurationBuilder AddLockbox(this IConfigurationBuilder builder,
-            string apiUrl = null, string apiKey = null, string entryKey = null)
+            string encryptionKey = null, string apiUrl = null,
+            string apiKey = null, string entryKey = null,
+            bool isComplexObject = true)
         {
+            encryptionKey = GetParameterOrFail(encryptionKey, EncryptionKeyEnvironmentVariable, "encryption key");
             apiUrl = GetParameterOrFail(apiUrl, ApiUrlEnvironmentVariable, "API key");
             apiKey = GetParameterOrFail(apiKey, ApiKeyEnvironmentVariable, "API url");
             entryKey = GetParameterOrFail(entryKey, EntryKeyEnvironmentVariable, "entry key");
-            var lockboxClient = new LockboxEntryClient(apiUrl, apiKey);
+            var lockboxClient = new LockboxEntryClient(encryptionKey, apiUrl, apiKey);
             var entryDictionary = lockboxClient.GetEntryAsDictionaryAsync(entryKey).Result;
             if (entryDictionary == null)
             {
                 throw new ArgumentException($"Lockbox entry has not been found for key: '{entryKey}'.", nameof(entryKey));
             }
 
-            var data = from entryPair in entryDictionary
-                from entry in entryPair.Value as IEnumerable<object>
-                let property = (JProperty) entry
-                select new KeyValuePair<string, string>($"{entryPair.Key}:{property.Name}", property.Value.ToString());
-
+            var data = isComplexObject ? GetComplexObjectMappings(entryDictionary) : GetFlatObjectMappings(entryDictionary);
             var source = new MemoryConfigurationSource {InitialData = data};
             builder.Add(source);
 
@@ -45,5 +45,17 @@ namespace Lockbox.Client.Extensions
 
             throw new ArgumentException($"Lockbox {parameterName} can not be empty!", nameof(parameter));
         }
+
+        private static IEnumerable<KeyValuePair<string, string>> GetFlatObjectMappings(
+                IDictionary<string, object> entryDictionary)
+            => from entryPair in entryDictionary
+            select new KeyValuePair<string, string>($"{entryPair.Key}", $"{entryPair.Value}");
+
+        private static IEnumerable<KeyValuePair<string, string>> GetComplexObjectMappings(
+                IDictionary<string, object> entryDictionary)
+            => from entryPair in entryDictionary
+            from entry in entryPair.Value as IEnumerable<object>
+            let property = (JProperty) entry
+            select new KeyValuePair<string, string>($"{entryPair.Key}:{property.Name}", property.Value.ToString());
     }
 }

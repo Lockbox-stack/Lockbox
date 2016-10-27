@@ -6,7 +6,6 @@ namespace Lockbox.Api.Extensions
 {
     public static class ConfigurationExtensions
     {
-        private static readonly string EncryptionKeyEnvironmentVariable = "LOCKBOX_ENCRYPTION_KEY";
         private static readonly string SecretKeyEnvironmentVariable = "LOCKBOX_SECRET_KEY";
         private static readonly string MongoConnectionStringEnvironmentVariable = "LOCKBOX_MONGO_CONNECTION_STRING";
         private static readonly string MongoDatabaseEnvironmentVariable = "LOCKBOX_MONGO_DATABASE";
@@ -34,8 +33,6 @@ namespace Lockbox.Api.Extensions
 
         private static LockboxSettings InitializeLockboxSettings(LockboxSettings settings)
         {
-            settings.EncryptionKey = GetParameterOrFail(settings.EncryptionKey,
-                EncryptionKeyEnvironmentVariable, "encryption key");
             settings.SecretKey = GetParameterOrFail(settings.SecretKey,
                 SecretKeyEnvironmentVariable, "secret key");
 

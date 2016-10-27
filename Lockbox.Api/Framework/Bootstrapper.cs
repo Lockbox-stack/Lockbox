@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Security.Principal;
 using Autofac;
+using Lockbox.Api.Extensions;
 using Lockbox.Api.IoC;
 using Lockbox.Api.MongoDb;
 using Lockbox.Api.Services;
@@ -62,6 +63,9 @@ namespace Lockbox.Api.Framework
             var configuration = new StatelessAuthenticationConfiguration(ctx =>
             {
                 var apikey = jwtTokenHandler.GetFromAuthorizationHeader(ctx.Request.Headers.Authorization);
+                if (apikey.Empty())
+                    return null;
+
                 var token = jwtTokenHandler.Decode(apikey);
                 var user = apiKeyService.GetUserAsync(apikey).Result;
                 var isValid = apiKeyService.IsValid(user, apikey);

@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Lockbox.Api.Domain;
+using Lockbox.Api.Extensions;
 
 namespace Lockbox.Api.Services
 {
@@ -29,6 +30,9 @@ namespace Lockbox.Api.Services
 
         public string GetSalt(string value)
         {
+            if (value.Empty())
+                throw new ArgumentException("Can not generate salt from empty value.", nameof(value));
+
             var random = new Random();
             var saltSize = random.Next(MinSaltSize, MaxSaltSize);
             var saltBytes = new byte[saltSize];
@@ -41,6 +45,11 @@ namespace Lockbox.Api.Services
 
         public string GetHash(string value, string salt)
         {
+            if (value.Empty())
+                throw new ArgumentException("Can not generate hash an empty value.", nameof(value));
+            if (salt.Empty())
+                throw new ArgumentException("Can not use an empty salt from hashing value.", nameof(value));
+
             using (var sha512 = SHA512.Create())
             {
                 var bytes = Encoding.Unicode.GetBytes(value + salt);
@@ -50,10 +59,17 @@ namespace Lockbox.Api.Services
             }
         }
 
-        public string Encrypt(string value, string passwordKey, string salt)
+        public string Encrypt(string value, string salt, string encryptionKey)
         {
+            if (value.Empty())
+                throw new ArgumentException("Value to be encrypted can not be empty.", nameof(value));
+            if (salt.Empty())
+                throw new ArgumentException("Salt can not be empty.", nameof(salt));
+            if (encryptionKey.Empty())
+                throw new ArgumentException("Encryption key can not be empty.", nameof(encryptionKey));
+
             var algorithm = TripleDES.Create();
-            var rgb = new Rfc2898DeriveBytes(passwordKey, GetBytes(salt), DeriveBytesIterationsCount);
+            var rgb = new Rfc2898DeriveBytes(encryptionKey, GetBytes(salt), DeriveBytesIterationsCount);
             var rgbKey = rgb.GetBytes(algorithm.KeySize >> 3);
             var rgbIv = rgb.GetBytes(algorithm.BlockSize >> 3);
             var transform = algorithm.CreateEncryptor(rgbKey, rgbIv);
@@ -68,15 +84,22 @@ namespace Lockbox.Api.Services
             return Convert.ToBase64String(buffer.ToArray());
         }
 
-        public string Decrypt(string text, string passwordKey, string salt)
+        public string Decrypt(string value, string salt, string encryptionKey)
         {
+            if (value.Empty())
+                throw new ArgumentException("Value to be decrypted can not be empty.", nameof(value));
+            if (salt.Empty())
+                throw new ArgumentException("Salt can not be empty.", nameof(salt));
+            if (encryptionKey.Empty())
+                throw new ArgumentException("Encryption key can not be empty.", nameof(encryptionKey));
+
             var algorithm = TripleDES.Create();
-            var rgb = new Rfc2898DeriveBytes(passwordKey, GetBytes(salt), DeriveBytesIterationsCount);
+            var rgb = new Rfc2898DeriveBytes(encryptionKey, GetBytes(salt), DeriveBytesIterationsCount);
             var rgbKey = rgb.GetBytes(algorithm.KeySize >> 3);
             var rgbIv = rgb.GetBytes(algorithm.BlockSize >> 3);
             var transform = algorithm.CreateDecryptor(rgbKey, rgbIv);
 
-            var buffer = new MemoryStream(Convert.FromBase64String(text));
+            var buffer = new MemoryStream(Convert.FromBase64String(value));
             using (var reader = new StreamReader(new CryptoStream(buffer,
                 transform, CryptoStreamMode.Read), Encoding.Unicode))
             {

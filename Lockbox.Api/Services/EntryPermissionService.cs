@@ -19,11 +19,11 @@ namespace Lockbox.Api.Services
             _userRepository = userRepository;
         }
 
-        public async Task<object> GetValueAsync(string username, string key)
+        public async Task<object> GetValueAsync(string username, string key, string encryptionKey)
         {
             await ValidatePermission(username, Permission.ReadEntry);
 
-            return await _entryService.GetValueAsync(key);
+            return await _entryService.GetValueAsync(key, encryptionKey);
         }
 
         public async Task<IEnumerable<string>> GetKeysAsync(string username)
@@ -33,10 +33,10 @@ namespace Lockbox.Api.Services
             return await _entryService.GetKeysAsync();
         }
 
-        public async Task CreateAsync(string username, string key, object value)
+        public async Task CreateAsync(string username, string key, object value, string encryptionKey)
         {
             await ValidatePermission(username, Permission.CreateEntry);
-            await _entryService.CreateAsync(key, value, username);
+            await _entryService.CreateAsync(key, value, username, encryptionKey);
         }
 
         public async Task DeleteAsync(string username, string key)
