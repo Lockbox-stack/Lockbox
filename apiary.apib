@@ -3,78 +3,192 @@ HOST: http://polls.apiblueprint.org/
 
 # Lockbox
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Lockbox is a dead simple centralized and secured storage for your credentials.
 
-## Questions Collection [/questions]
+Below is presented the API documentation that will let you use Lockbox within any application that can perform HTTP requests.
 
-### List All Questions [GET]
+## Initialization [/init]
 
-+ Response 200 (application/json)
+### Initialize lockbox [POST]
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
+When you run Lockbox for the first time, it is required to initialize the server with a new admin account.
 
-### Create a New Question [POST]
+Initialization can be performed only once and it returns an API key that can be used for performing any operation like adding new entries or users.
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+From that point, you must include <em>Authorization: Bearer API_KEY</em> in each request.
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "username": "admin", "password": "secret"
+        }
+    
+    
++ Response 200 (application/json)
+
+        {
+            "apiKey": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJTdWIiOiJhZG1pbiIsIkV4cCI6NjY3NjkxODY4NDI3MzA5MTYwfQ.DfwQx4LHNwQqWsaZEStfOzQC-eQKxbsBOZjm5bMeaX18j3Nu1tby9oYQ2IybzCdCP7XvJfaGHOV1rJQT5xEJXQ"
         }
 
-+ Response 201 (application/json)
+
+## Entries [/entries]
+
+Entries are what the Lockbox is all about - entry is an object that has its unique key, encrypted value (can be anything e.g. object, string or number) and optional expiry.
+
+Each entry may be encrypted with a different encryption key. The Lockbox server does not store the keys anywhere, which means that even if the database was compromised an attacker will not be able to decrypt the values.
+
+In order to encrypt/decrypt an entry, you have to include a header <em>X-Encryption-Key</em> containing your custom encryption key used for entry encryption.
+
+If an entry already exists for the given key, it will be updated with the new value.
+
+### Create a new entry [POST]
+
++ Request (application/json)
 
     + Headers
 
-            Location: /questions/2
-
+            Authorization: Bearer API_KEY
+            X-Encryption-Key: ENCRYPTION_KEY
+    
     + Body
+    
+            {"key": "my-entry", "value": {"email": "my@email.com", "password": "secret"}}
 
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
++ Response 204
+
+    + Headers
+
+            Location: /entries/my-entry
+
+
+
+### Browse entries [GET]
+
+List all entries (keys) available in the system.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 200 (application/json)
+
+        ["my-entry"]
+
+
+## Single entry [/entries/{key}]
+
+### Get entry [GET]
+
+Returns decrypted entry value.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+            X-Encryption-Key: ENCRYPTION_KEY
+
++ Response 200 (application/json)
+
+        {
+            "email": "my@email.com",
+            "password": "secret"
+        }
+
+### Delete entry [DELETE]
+
+Removes entry from the system.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+            
++ Response 204  
+
+## Users [/users]
+
+It is considered a good practice to use a separate user accounts with different permissions for unique applications.
+
+You can also skip this part and use the root API key (from admin account).
+
+### Create a new user [POST]
+
+Create a new user with default permissions <em>["ReadEntryKeys", "ReadEntry"]</em> and a single API key.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+    
+    + Body
+    
+            {"username": "user1", "password": "secret"}
+
++ Response 204
+
+    + Headers
+
+            Location: /users/user1
+
+
+
+### Browse users [GET]
+
+List all usernames available in the system.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 200 (application/json)
+
+        ["admin", "user1"]
+
+
+## Single user [/users/{username}]
+
+### Get user details [GET]
+
+Returns details about the user account including available API keys.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 200 (application/json)
+
+        {
+          "username": "user1",
+          "role": "user",
+          "isActive": true,
+          "apiKeys": [
+            "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJTdWIiOiJ1c2VyMSIsIkV4cCI6NjY3NjkxODc0NDk5MzE3MTkwfQ.y4PLZzhDK65qd6mU1x3m7ass1fuE1AGJhhyN-96DuaqtWCOeRzd8gppM62Pdemp3e69DefmZQtwammerTTegmw"
+          ],
+          "permissions": [
+            "ReadEntryKeys",
+            "ReadEntry"
+          ]
+        }
+
+
+### Delete user [DELETE]
+
+Removes user account from the system.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+            
+   
++ Response 204
