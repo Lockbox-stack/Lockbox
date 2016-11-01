@@ -9,14 +9,13 @@ namespace Lockbox.Api.Domain
         public string Value { get; protected set; }
         public string Salt { get; protected set; }
         public string Author { get; protected set; }
-        public DateTime Expiry { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
 
         protected Entry()
         {
         }
 
-        public Entry(string key, string value, string salt, string author, DateTime? expiry = null)
+        public Entry(string key, string value, string salt, string author)
         {
             if (key.Empty())
                 throw new ArgumentException("Key can not be empty.", nameof(key));
@@ -31,7 +30,6 @@ namespace Lockbox.Api.Domain
             Value = value;
             Salt = salt;
             Author = author;
-            Expiry = expiry.GetValueOrDefault(DateTime.UtcNow.AddYears(100));
             CreatedAt = DateTime.UtcNow;
         }
     }

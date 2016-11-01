@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
@@ -28,8 +27,6 @@ namespace Lockbox.Api.Services
             var user = new User(username, Role.Admin);
             user.SetPassword(password, _encrypter);
             user.Activate();
-            var permissions = Enum.GetValues(typeof(Permission)).Cast<Permission>().ToList();
-            permissions.ForEach(user.AddPermission);
             await _userRepository.AddAsync(user);
             var apiKey = await _apiKeyService.CreateAsync(username);
 

@@ -15,7 +15,7 @@ namespace Lockbox.Api.IoC.Modules
             builder.RegisterType<EntryService>().As<IEntryService>();
             builder.RegisterType<EntryPermissionService>().As<IEntryPermissionService>();
             builder.RegisterType<UserService>().As<IUserService>();
-            builder.RegisterType<UserPermissionsService>().As<IUserPermissionsService>();
+            builder.RegisterType<BoxUserPermissionsService>().As<IBoxUserPermissionsService>();
         }
     }
 }

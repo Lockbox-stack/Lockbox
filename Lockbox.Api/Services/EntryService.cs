@@ -10,20 +10,22 @@ namespace Lockbox.Api.Services
     public class EntryService : IEntryService
     {
         private readonly IEncrypter _encrypter;
-        private readonly IEntryRepository _entryRepository;
+        private readonly IBoxRepository _boxRepository;
 
-        public EntryService(IEncrypter encrypter, IEntryRepository entryRepository)
+        public EntryService(IEncrypter encrypter, IBoxRepository boxRepository)
         {
             _encrypter = encrypter;
-            _entryRepository = entryRepository;
+            _boxRepository = boxRepository;
         }
 
-        public async Task<object> GetValueAsync(string key, string encryptionKey)
+        public async Task<object> GetValueAsync(string box, string key, string encryptionKey)
         {
-            var entry = await _entryRepository.GetAsync(key);
+            var entryBox = await _boxRepository.GetAsync(box);
+            if (entryBox == null)
+                throw new ArgumentException($"Box {box} has not been found.");
+
+            var entry = entryBox.GetEntry(key);
             if (entry == null)
-                return null;
-            if (entry.Expiry <= DateTime.UtcNow)
                 return null;
 
             var value = _encrypter.Decrypt(entry.Value, entry.Salt, encryptionKey);
@@ -31,27 +33,33 @@ namespace Lockbox.Api.Services
             return JsonConvert.DeserializeObject(value);
         }
 
-        public async Task<IEnumerable<string>> GetKeysAsync()
-            => await _entryRepository.GetKeysAsync();
+        public async Task<IEnumerable<string>> GetKeysAsync(string box)
+            => await _boxRepository.GetNamesAsync();
 
-        public async Task CreateAsync(string key, object value, string author, string encryptionKey)
+        public async Task CreateAsync(string box, string key, object value, string author, string encryptionKey)
         {
-            await DeleteAsync(key);
+            var entryBox = await _boxRepository.GetAsync(box);
+            if (entryBox == null)
+                throw new ArgumentException($"Box {box} has not been found.");
+
+            await DeleteAsync(box, key);
             var randomSecureKey = _encrypter.GetRandomSecureKey();
             var salt = _encrypter.GetSalt(randomSecureKey);
             var serializedValue = JsonConvert.SerializeObject(value);
             var encryptedValue = _encrypter.Encrypt(serializedValue, salt, encryptionKey);
             var entry = new Entry(key, encryptedValue, salt, author);
-            await _entryRepository.AddAsync(entry);
+            entryBox.AddEntry(entry);
+            await _boxRepository.UpdateAsync(entryBox);
         }
 
-        public async Task DeleteAsync(string key)
+        public async Task DeleteAsync(string box, string key)
         {
-            var entry = await _entryRepository.GetAsync(key);
-            if (entry == null)
-                return;
+            var entryBox = await _boxRepository.GetAsync(box);
+            if (entryBox == null)
+                throw new ArgumentException($"Box {box} has not been found.");
 
-            await _entryRepository.DeleteAsync(key);
+            entryBox.RemoveEntry(key);
+            await _boxRepository.UpdateAsync(entryBox);
         }
     }
 }

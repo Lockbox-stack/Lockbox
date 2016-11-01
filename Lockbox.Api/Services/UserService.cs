@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
@@ -35,8 +34,6 @@ namespace Lockbox.Api.Services
             user = new User(username, role.GetValueOrDefault(Role.User));
             user.SetPassword(password, _encrypter);
             user.Activate();
-            user.AddPermission(Permission.ReadEntryKeys);
-            user.AddPermission(Permission.ReadEntry);
             await _userRepository.AddAsync(user);
             await _apiKeyService.CreateAsync(username);
         }
@@ -52,22 +49,6 @@ namespace Lockbox.Api.Services
         {
             var user = await GetAsyncOrFail(username);
             user.Lock();
-            await _userRepository.UpdateAsync(user);
-        }
-
-        public async Task AddPermissionsAsync(string username, params Permission[] permissions)
-        {
-            var user = await GetAsyncOrFail(username);
-            var permissionsList = permissions?.ToList() ?? new List<Permission>();
-            permissionsList.ForEach(user.AddPermission);
-            await _userRepository.UpdateAsync(user);
-        }
-
-        public async Task DeletePermissionsAsync(string username, params Permission[] permissions)
-        {
-            var user = await GetAsyncOrFail(username);
-            var permissionsList = permissions?.ToList() ?? new List<Permission>();
-            permissionsList.ForEach(user.DeletePermission);
             await _userRepository.UpdateAsync(user);
         }
 

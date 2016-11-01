@@ -2,20 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lockbox.Api.Domain;
-using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
 using Nancy;
 using Nancy.Security;
 
 namespace Lockbox.Api.Modules
 {
-    public class UserPermissionModule : ModuleBase
+    public class BoxUserPermissionModule : ModuleBase
     {
-        private readonly IUserPermissionsService _userPermissionsService;
-
-        public UserPermissionModule(IUserPermissionsService userPermissionsService) : base("users/{username}/permissions")
+        public BoxUserPermissionModule(IBoxUserPermissionsService boxUserPermissionsService)
+            : base("boxes/{box}/users/{username}/permissions")
         {
-            _userPermissionsService = userPermissionsService;
             this.RequiresAuthentication();
 
             Get("", async args =>
@@ -24,7 +21,7 @@ namespace Lockbox.Api.Modules
                 if (!username.Equals(CurrentUsername, StringComparison.CurrentCultureIgnoreCase))
                     RequiresAdmin();
 
-                var permissions = await _userPermissionsService.GetAllAsync(username);
+                var permissions = await boxUserPermissionsService.GetAllAsync((string) args.box, username);
 
                 return permissions.Select(x => x.ToString()).ToList();
             });
@@ -37,7 +34,8 @@ namespace Lockbox.Api.Modules
                     .Cast<Permission>()
                     .ToArray();
 
-                await _userPermissionsService.UpdateAsync((string)args.username, selectedPermissions);
+                await
+                    boxUserPermissionsService.UpdateAsync((string) args.box, (string) args.username, selectedPermissions);
 
                 return HttpStatusCode.NoContent;
             });
@@ -45,7 +43,7 @@ namespace Lockbox.Api.Modules
             Delete("", async args =>
             {
                 RequiresAdmin();
-                await _userPermissionsService.DeleteAllAsync((string) args.username);
+                await boxUserPermissionsService.DeleteAllAsync((string) args.box, (string) args.username);
 
                 return HttpStatusCode.NoContent;
             });

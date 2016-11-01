@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
 using Nancy;
 using Nancy.Security;
@@ -8,13 +7,13 @@ namespace Lockbox.Api.Modules
 {
     public class EntryModule : ModuleBase
     {
-        public EntryModule(IEntryPermissionService entryPermissionService) : base("entries")
+        public EntryModule(IEntryPermissionService entryPermissionService) : base("boxes/{box}/entries")
         {
             this.RequiresAuthentication();
 
             Get("", async args =>
             {
-                var keys = await entryPermissionService.GetKeysAsync(CurrentUsername);
+                var keys = await entryPermissionService.GetKeysAsync((string)args.box, CurrentUsername);
 
                 return keys ?? new List<string>();
             });
@@ -22,23 +21,24 @@ namespace Lockbox.Api.Modules
             Get("{key}", async args =>
             {
                 var entry = await entryPermissionService.GetValueAsync(CurrentUsername,
-                    (string) args.key, EncryptionKey);
+                    (string)args.box, (string) args.key, EncryptionKey);
 
                 return entry ?? HttpStatusCode.NotFound;
             });
 
-            Post("", async args =>
+            Post("{key}", async args =>
             {
-                var request = BindRequest<CreateEntry>();
+                var key = (string) args.key;
+                var value = BindRequest<object>();
                 await entryPermissionService.CreateAsync(CurrentUsername,
-                    request.Key, request.Value, EncryptionKey);
+                    (string)args.box, key, value, EncryptionKey);
 
-                return Created($"entries/{request.Key}");
+                return Created($"entries/{key}");
             });
 
             Delete("{key}", async args =>
             {
-                await entryPermissionService.DeleteAsync(CurrentUsername, (string) args.key);
+                await entryPermissionService.DeleteAsync(CurrentUsername, (string)args.box, (string) args.key);
 
                 return HttpStatusCode.NoContent;
             });

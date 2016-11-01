@@ -8,18 +8,11 @@ namespace Lockbox.Api.Domain
     public class User
     {
         private ISet<string> _apiKeys = new HashSet<string>();
-        private ISet<Permission> _permissions = new HashSet<Permission>();
 
         public string Username { get; protected set; }
         public string Password { get; protected set; }
         public string Salt { get; protected set; }
         public Role Role { get; protected set; }
-
-        public IEnumerable<Permission> Permissions
-        {
-            get { return _permissions; }
-            set { _permissions = new HashSet<Permission>(value); }
-        }
 
         public bool IsActive { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
@@ -40,7 +33,7 @@ namespace Lockbox.Api.Domain
             if (username.Empty())
                 throw new ArgumentException("Username can not be empty.", nameof(username));
 
-            Username = username;
+            Username = username.ToLowerInvariant();;
             Role = role;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
@@ -105,33 +98,6 @@ namespace Lockbox.Api.Domain
 
 
             _apiKeys.Remove(apiKey);
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void AddPermission(Permission permission)
-        {
-            if (Permissions.Contains(permission))
-                return;
-
-            _permissions.Add(permission);
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void DeletePermission(Permission permission)
-        {
-            if (!Permissions.Contains(permission))
-                return;
-
-            _permissions.Add(permission);
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void DeleteAllPermissions()
-        {
-            if(!_permissions.Any())
-                return;
-
-            _permissions.Clear();
             UpdatedAt = DateTime.UtcNow;
         }
     }
