@@ -26,7 +26,7 @@ namespace Lockbox.Api.Domain
             if (author.Empty())
                 throw new ArgumentException("Author can not be empty.", nameof(author));
 
-            Key = key.ToLowerInvariant();
+            Key = key.Trim().ToLowerInvariant();
             Value = value;
             Salt = salt;
             Author = author;

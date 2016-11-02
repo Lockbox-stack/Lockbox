@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lockbox.Api.Extensions;
 
 namespace Lockbox.Api.Domain
 {
@@ -10,6 +11,7 @@ namespace Lockbox.Api.Domain
         private ISet<Entry> _entries = new HashSet<Entry>();
 
         public string Name { get; protected set; }
+        public string Owner { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
 
@@ -29,28 +31,50 @@ namespace Lockbox.Api.Domain
         {
         }
 
-        public Box(string name)
+        public Box(string name, User owner)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (name.Empty())
                 throw new ArgumentException("Box name can not be empty.", nameof(name));
             if (name.Length > 100)
                 throw new ArgumentException("Box name can not have more than 100 characters.", nameof(name));
 
-            Name = name.ToLowerInvariant();
+            Name = name.Trim().ToLowerInvariant();
+            Owner = owner.Username;
+
+            var user = new BoxUser(owner, BoxRole.Admin);
+            if(owner.IsActive)
+                user.Activate();
+
+            AddUser(user);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }
 
+        public bool HasManagementAccess(string username)
+        {
+            if (!HasAccess(username))
+                return false;
+
+            var user = GetUser(username);
+
+            return Owner == username || user.Role == BoxRole.Admin;
+        }
+
+        public bool HasAccess(string username)
+        {
+            var user = GetUser(username);
+
+            return user != null && user.IsActive;
+        }
+
         public void AddEntry(Entry entry)
         {
-            if (_entries.Contains(entry))
-                return;
-
+            DeleteEntry(entry.Key);
             _entries.Add(entry);
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void RemoveEntry(string key)
+        public void DeleteEntry(string key)
         {
             var entry = GetEntry(key);
             if (entry == null)
@@ -69,7 +93,7 @@ namespace Lockbox.Api.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void RemoveUser(string username)
+        public void DeleteUser(string username)
         {
             var user = GetUser(username);
             if (user == null)

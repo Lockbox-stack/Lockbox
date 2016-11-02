@@ -9,13 +9,15 @@ namespace Lockbox.Api.IoC.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<ApiKeyService>().As<IApiKeyService>();
+            builder.RegisterType<BoxService>().As<IBoxService>();
+            builder.RegisterType<BoxUserPermissionsService>().As<IBoxUserPermissionsService>();
+            builder.RegisterType<BoxUserService>().As<IBoxUserService>();
             builder.RegisterType<Encrypter>().As<IEncrypter>().SingleInstance();
-            builder.RegisterType<InitializationService>().As<IInitializationService>();
-            builder.RegisterType<JwtTokenHandler>().As<IJwtTokenHandler>().SingleInstance();
             builder.RegisterType<EntryService>().As<IEntryService>();
             builder.RegisterType<EntryPermissionService>().As<IEntryPermissionService>();
+            builder.RegisterType<InitializationService>().As<IInitializationService>();
+            builder.RegisterType<JwtTokenHandler>().As<IJwtTokenHandler>().SingleInstance();
             builder.RegisterType<UserService>().As<IUserService>();
-            builder.RegisterType<BoxUserPermissionsService>().As<IBoxUserPermissionsService>();
         }
     }
 }

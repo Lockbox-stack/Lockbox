@@ -11,8 +11,6 @@ namespace Lockbox.Api.Services
         Task AddAsync(string box, string username, BoxRole? role = null);
         Task ActivateAsync(string box, string username);
         Task LockAsync(string box, string username);
-        Task AddPermissionsAsync(string box, string username, params Permission[] permissions);
-        Task DeletePermissionsAsync(string box, string username, params Permission[] permissions);
         Task DeleteAsync(string box, string username);
     }
 }

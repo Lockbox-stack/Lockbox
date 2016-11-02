@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
@@ -17,10 +18,19 @@ namespace Lockbox.Api.MongoDb
         }
 
         public async Task<Box> GetAsync(string name)
-            => await Boxes().AsQueryable().FirstOrDefaultAsync(x => x.Name == name.ToLowerInvariant());
+            => await Boxes().AsQueryable()
+                .FirstOrDefaultAsync(x => x.Name == name.ToLowerInvariant());
 
         public async Task<IEnumerable<string>> GetNamesAsync()
-            => await Boxes().AsQueryable().Select(x => x.Name).ToListAsync();
+            => await Boxes().AsQueryable()
+                .Select(x => x.Name).
+                ToListAsync();
+
+        public async Task<IEnumerable<string>> GetNamesForUserAsync(string username)
+            => await Boxes().AsQueryable()
+                .Where(x => x.Users.Any(u => u.Username == username))
+                .Select(x => x.Name)
+                .ToListAsync();
 
         public async Task AddAsync(Box box)
             => await Boxes().InsertOneAsync(box);

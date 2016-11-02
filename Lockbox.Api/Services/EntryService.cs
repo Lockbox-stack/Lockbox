@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
 using Newtonsoft.Json;
+using NLog;
 
 namespace Lockbox.Api.Services
 {
     public class EntryService : IEntryService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEncrypter _encrypter;
         private readonly IBoxRepository _boxRepository;
 
@@ -50,6 +52,7 @@ namespace Lockbox.Api.Services
             var entry = new Entry(key, encryptedValue, salt, author);
             entryBox.AddEntry(entry);
             await _boxRepository.UpdateAsync(entryBox);
+            Logger.Info($"Eentry '{key}' was added to the box '{box}'.");
         }
 
         public async Task DeleteAsync(string box, string key)
@@ -58,8 +61,9 @@ namespace Lockbox.Api.Services
             if (entryBox == null)
                 throw new ArgumentException($"Box {box} has not been found.");
 
-            entryBox.RemoveEntry(key);
+            entryBox.DeleteEntry(key);
             await _boxRepository.UpdateAsync(entryBox);
+            Logger.Info($"Entry '{key}' was deleted from the box '{box}'.");
         }
     }
 }

@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
+using NLog;
 
 namespace Lockbox.Api.Services
 {
     public class BoxUserPermissionsService : IBoxUserPermissionsService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IBoxRepository _boxRepository;
 
         public BoxUserPermissionsService(IBoxRepository boxRepository)
@@ -35,6 +37,7 @@ namespace Lockbox.Api.Services
 
             boxUser.DeleteAllPermissions();
             await _boxRepository.UpdateAsync(boxEntry);
+            Logger.Info($"User '{username}' permissions in box '{boxEntry.Name}' were deleted.");
         }
 
         public async Task UpdateAsync(string box, string username, params Permission[] permissions)
@@ -48,6 +51,7 @@ namespace Lockbox.Api.Services
             var selectedPermissions = permissions?.ToList() ?? new List<Permission>();
             selectedPermissions.ForEach(boxUser.AddPermission);
             await _boxRepository.UpdateAsync(boxEntry);
+            Logger.Info($"User '{username}' permissions in box '{boxEntry.Name}' were updated.");
         }
 
         private async Task<Box> GetBoxAsyncOrFail(string box)

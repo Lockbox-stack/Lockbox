@@ -5,11 +5,14 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses.Negotiation;
 using Nancy.Security;
+using NLog;
 
 namespace Lockbox.Api.Modules
 {
     public abstract class ModuleBase : NancyModule
     {
+        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         protected ModuleBase(string modulePath = "") : base(modulePath)
         {
         }

@@ -34,6 +34,8 @@ namespace Lockbox.Api.Modules
                 return new
                 {
                     username = user.Username,
+                    createdAt = user.CreatedAt.ToString("g"),
+                    updatedAt = user.UpdatedAt.ToString("g"),
                     role = user.Role.ToString().ToLowerInvariant(),
                     isActive = user.IsActive,
                     apiKeys = user.ApiKeys

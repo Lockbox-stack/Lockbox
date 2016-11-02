@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
+using NLog;
 
 namespace Lockbox.Api.Services
 {
     public class BoxUserService : IBoxUserService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IBoxRepository _boxRepository;
         private readonly IUserRepository _userRepository;
 
@@ -42,6 +44,7 @@ namespace Lockbox.Api.Services
 
             boxEntry.AddUser(boxUser);
             await _boxRepository.UpdateAsync(boxEntry);
+            Logger.Info($"User '{username}' was added to the box '{boxEntry.Name}'.");
         }
 
         public async Task ActivateAsync(string box, string username)
@@ -53,6 +56,7 @@ namespace Lockbox.Api.Services
 
             boxUser.Activate();
             await _boxRepository.UpdateAsync(boxEntry);
+            Logger.Info($"User '{username}' was activated in the box '{boxEntry.Name}'.");
         }
 
         public async Task LockAsync(string box, string username)
@@ -64,24 +68,7 @@ namespace Lockbox.Api.Services
 
             boxUser.Lock();
             await _boxRepository.UpdateAsync(boxEntry);
-        }
-
-        public async Task AddPermissionsAsync(string box, string username, params Permission[] permissions)
-        {
-            var boxEntry = await GetBoxAsyncOrFail(box);
-            var boxUser = boxEntry.GetUser(username);
-            var permissionsList = permissions?.ToList() ?? new List<Permission>();
-            permissionsList.ForEach(boxUser.AddPermission);
-            await _boxRepository.UpdateAsync(boxEntry);
-        }
-
-        public async Task DeletePermissionsAsync(string box, string username, params Permission[] permissions)
-        {
-            var boxEntry = await GetBoxAsyncOrFail(box);
-            var boxUser = boxEntry.GetUser(username);
-            var permissionsList = permissions?.ToList() ?? new List<Permission>();
-            permissionsList.ForEach(boxUser.DeletePermission);
-            await _boxRepository.UpdateAsync(boxEntry);
+            Logger.Info($"User '{username}' was locked in the box '{boxEntry.Name}'.");
         }
 
         public async Task DeleteAsync(string box, string username)
@@ -91,14 +78,19 @@ namespace Lockbox.Api.Services
             if (boxUser == null)
                 throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
 
+            if (boxEntry.Owner.Equals(boxUser.Username))
+            {
+                throw new InvalidOperationException($"Box '{box}' owner '{boxUser.Username}' can not be deleted.");
+            }
             if (boxUser.Role == BoxRole.Admin)
             {
                 var adminsCount = boxEntry.Users.Count(x => x.Role == BoxRole.Admin);
                 if (adminsCount == 1)
-                    throw new InvalidOperationException($"Can not remove the only one admin account in box {box}.");
+                    throw new InvalidOperationException($"Can not delete the only one admin account in box {box}.");
             }
-            boxEntry.RemoveUser(username);
+            boxEntry.DeleteUser(username);
             await _boxRepository.UpdateAsync(boxEntry);
+            Logger.Info($"User '{username}' was deleted from the box '{boxEntry.Name}'.");
         }
 
         private async Task<Box> GetBoxAsyncOrFail(string box)

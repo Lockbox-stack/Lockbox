@@ -33,7 +33,7 @@ namespace Lockbox.Api.Domain
             if (username.Empty())
                 throw new ArgumentException("Username can not be empty.", nameof(username));
 
-            Username = username.ToLowerInvariant();;
+            Username = username.Trim().ToLowerInvariant();;
             Role = role;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;

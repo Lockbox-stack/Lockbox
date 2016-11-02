@@ -5,11 +5,13 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
+using NLog;
 
 namespace Lockbox.Api.Services
 {
     public class EntryPermissionService : IEntryPermissionService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IEntryService _entryService;
         private readonly IUserRepository _userRepository;
         private readonly IBoxRepository _boxRepository;
@@ -53,9 +55,10 @@ namespace Lockbox.Api.Services
             var entryBox = await _boxRepository.GetAsync(box);
             if (entryBox == null)
                 throw new ArgumentException($"Box {box} has not been found.");
+
             var user = await _userRepository.GetAsync(username);
             if (user == null)
-                throw new ArgumentNullException(nameof(user), $"User {username} has not been found.");
+                throw new ArgumentException($"User {username} has not been found.", nameof(username));
             if (!user.IsActive)
                 throw new AuthenticationException($"User {username} is not active.");
             if (user.Role == Role.Admin)
@@ -63,7 +66,7 @@ namespace Lockbox.Api.Services
 
             var boxUser = entryBox.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(user), $"User {username} has not been found in box {box}.");
+                throw new ArgumentException($"User {username} has not been found in box {box}.", nameof(username));
             if (boxUser.Permissions.Contains(permission))
                 return;
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
 using Nancy;
 using Nancy.Security;
@@ -26,14 +27,13 @@ namespace Lockbox.Api.Modules
                 return entry ?? HttpStatusCode.NotFound;
             });
 
-            Post("{key}", async args =>
+            Post("", async args =>
             {
-                var key = (string) args.key;
-                var value = BindRequest<object>();
+                var request = BindRequest<CreateEntry>();
                 await entryPermissionService.CreateAsync(CurrentUsername,
-                    (string)args.box, key, value, EncryptionKey);
+                    (string) args.box, request.Key, request.Value, EncryptionKey);
 
-                return Created($"entries/{key}");
+                return Created($"entries/{request.Value}");
             });
 
             Delete("{key}", async args =>
