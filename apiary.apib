@@ -1,9 +1,9 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: https://api.getlockbox.com
 
 # Lockbox
 
-Lockbox is a dead simple centralized and secured storage for your credentials.
+Lockbox is a dead simple, centralized and secured storage for your credentials.
 
 Below is presented the API documentation that will let you use Lockbox within any application that can perform HTTP requests.
 
@@ -15,12 +15,12 @@ When you run Lockbox for the first time, it is required to initialize the server
 
 Initialization can be performed only once and it returns an API key that can be used for performing any operation like adding new entries or users.
 
-From that point, you must include <em>Authorization: Bearer API_KEY</em> in each request.
+From that point, you must include <em>Authorization: Bearer API_KEY</em> for each request.
 
 + Request (application/json)
 
         {
-            "username": "admin", "password": "secret"
+            "username": "root", "password": "secret"
         }
     
     
@@ -31,17 +31,311 @@ From that point, you must include <em>Authorization: Bearer API_KEY</em> in each
         }
 
 
-## Entries [/entries]
 
-Entries are what the Lockbox is all about - entry is an object that has its unique key, encrypted value (can be anything e.g. object, string or number) and optional expiry.
+## API keys [/api-keys]
+
+### Create a new API key [POST]
+
+Generates an additional API key for the user. <em>Expiry</em> is an additional parameter used for setting the date after which the key will be no longer available - by default it never expires.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+    
+    + Body
+    
+            {"expiry": "10:12:10:00"}
+
+
++ Response 200 (application/json)
+
+        {
+            "apiKey": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJTdWIiOiJhZG1pbiIsIkV4cCI6NjY3NjkxODY4NDI3MzA5MTYwfQ.DfwQx4LHNwQqWsaZEStfOzQC-eQKxbsBOZjm5bMeaX18j3Nu1tby9oYQ2IybzCdCP7XvJfaGHOV1rJQT5xEJXQ"
+        }
+
+
+## API key [/api-keys/{apiKEy}]
+
+### Delete API key [DELETE]
+
+Removes API key from the system, so it can no longer be used for authentication purposes.
+
+User must have at least one API key assigned - if you will try to remove the last remaining one API key, the operation will fail.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 204 (application/json)
+
+## Boxes [/boxes]
+
+Box is a kind of workspace to which you can assign one or more users and add entries that hold the encrypted values.
+
+### Browse boxes [GET]
+
+List all boxes names to which the user belongs.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 200 (application/json)
+
+        ["default"]
+
+
+## Box [/boxes/{box}]
+
+### Create a new box [POST]
+
+Creates a new box with a single user being a box owner and an empty collection of entries.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 201
+
+    + Headers
+
+            Location: /boxes/{name}
+
+
+### Get box [GET]
+
+Returns details about the box.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 200 (application/json)
+
+        {
+          "name": "default",
+          "owner": "root",
+          "createdAt": "2016-11-02 18:56:12",
+          "updatedAt": "2016-11-02 18:56:52",
+          "entries": [
+            "appsettings"
+          ],
+          "users": [
+            {
+              "username": "root",
+              "role": "boxadmin",
+              "isActive": true
+            },
+            {
+              "username": "user1",
+              "role": "boxuser",
+              "isActive": true
+            }
+          ]
+        }
+
+
+### Delete box [DELETE]
+
+Removes box from the system including all of the entries.
+
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+            
+   
++ Response 204
+
+
+## Box users [/boxes/{box}/users]
+
+The box may contain one or more users with different roles (<em>boxuser</em>, <em>boxadmin</em>) and permissions.
+
+Required role: <strong>boxadmin</strong>
+
+### Browse box users [GET]
+
+Returns list of usernames that are assigned to the box.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 200 (application/json)
+
+            [
+              "root",
+              "user1"
+            ]
+
+
+### Add user to box [POST]
+
+Adds existing user in the system to the selected box with default permissions <em>["ReadEntryKeys", "ReadEntry"]</em>.
+You may also include an optional parameter <em>Role</em> (<em>boxuser</em>, <em>boxadmin</em>) - if not specified the default <em>boxuser</em> role will be assigned.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+    
+    + Body
+    
+            {"username": "user1",  "role": "boxuser"}
+
++ Response 201
+
+    + Headers
+
+            Location: /boxes/default/users/user1
+
+
+## Box user [/boxes/{box}/users/{username}]
+
+All operations require the user role of <strong>boxadmin</strong> in order to be performed.
+The only exception is fetching the box user details - if the given username does match with the user that performs the request, the request will succeed.
+
+### Get box user details [GET]
+
+Returns details about the user in the box.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 200 (application/json)
+
+            {
+              "username": "user1",
+              "role": "boxuser",
+              "isActive": true,
+              "permissions": [
+                "readentrykeys",
+                "readentry"
+              ]
+            }
+
+
+### Update box user [PUT]
+
+Updates the user in the box. All of the parameters are optional (nullable).
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+            
+    + Body
+    
+            {
+              "role": "boxadmin",
+              "isActive": false
+            }
+
++ Response 204 (application/json)
+
+### Delete box user [DELETE]
+
+Removes user account from the box.
+
+Box must have at least one user with <em>boxadmin</em> role assigned - if you will try to remove the last remaining <em>boxadmin</em>, the operation will fail.
+It is also not possible to remove the owner of the box.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+            
+   
++ Response 204
+
+
+## Box user permissions [/boxes/{box}/users/{username}/permissions]
+
+Permissions are a way to restrict an access to the particular resources and operations for the selected users in box. 
+
+All operations require the user role of <strong>boxadmin</strong> in order to be performed.
+The only exception is fetching the box user permissions - if the given username does match with the user that performs the request, the request will succeed.
+
+### Get box user permissions [GET]
+
+Returns a list of permissions assigned to the selected user in box.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+
++ Response 200 (application/json)
+
+        ["readEntryKeys", "readEntry", "createEntry", "deleteEntry"]
+        
+        
+### Update box user permissions [PUT]
+
+Updates user permissions specified in the request body (removes all of the already set permissions and sets the new ones). If the permissions will not be specified it will simply remove all user permissions.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+            
+    + Body
+    
+            ["readEntryKeys", "readEntry", "createEntry", "deleteEntry"]
+
++ Response 204
+
+      
+### Delete box user permissions [DELETE]
+
+Removes all permissions assigned to the given user.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer API_KEY
+            
++ Response 204
+
+## Entries [/boxes/{box}/entries]
+
+Entries are what the Lockbox is all about - entry is an object that has its unique key, encrypted value (can be anything e.g. object, string or number).
 
 Each entry may be encrypted with a different encryption key. The Lockbox server does not store the keys anywhere, which means that even if the database was compromised an attacker will not be able to decrypt the values.
 
-In order to encrypt/decrypt an entry, you have to include a header <em>X-Encryption-Key</em> containing your custom encryption key used for entry encryption.
+In order to decrypt/encrypt an entry, you have to include a header <em>X-Encryption-Key</em> containing your custom encryption key used for entry encryption.
 
 If an entry already exists for the given key, it will be updated with the new value.
 
 ### Create a new entry [POST]
+
+Creates a new entry that will be safely stored (with encrypted value using custom encryption key specified by the user) in the database.
+
+Required permission: <strong>CreateEntry</strong>
 
 + Request (application/json)
 
@@ -54,17 +348,18 @@ If an entry already exists for the given key, it will be updated with the new va
     
             {"key": "my-entry", "value": {"email": "my@email.com", "password": "secret"}}
 
-+ Response 204
++ Response 201
 
     + Headers
 
             Location: /entries/my-entry
 
 
-
 ### Browse entries [GET]
 
 List all entries (keys) available in the system.
+
+Required permission: <strong>ReadEntryKeys</strong>
 
 + Request (application/json)
 
@@ -77,11 +372,13 @@ List all entries (keys) available in the system.
         ["my-entry"]
 
 
-## Single entry [/entries/{key}]
+## Entry [/boxes/{box}/entries/{key}]
 
 ### Get entry [GET]
 
 Returns decrypted entry value.
+
+Required permission: <strong>ReadEntry</strong>
 
 + Request (application/json)
 
@@ -101,6 +398,8 @@ Returns decrypted entry value.
 
 Removes entry from the system.
 
+Required permission: <strong>DeleteEntry</strong>
+
 + Request (application/json)
 
     + Headers
@@ -113,11 +412,14 @@ Removes entry from the system.
 
 It is considered a good practice to use a separate user accounts with different permissions for unique applications.
 
-You can also skip this part and use the root API key (from admin account).
+You can also skip this part and use the root API key directly (from admin account).
+
+All operations require the user role of <strong>admin</strong> in order to be performed.
 
 ### Create a new user [POST]
 
-Create a new user with default permissions <em>["ReadEntryKeys", "ReadEntry"]</em> and a single API key.
+Create a new user with a single API key.
+You may also include an optional parameter <em>Role</em> (user, admin) - if not specified the default user role will be assigned.
 
 + Request (application/json)
 
@@ -127,9 +429,9 @@ Create a new user with default permissions <em>["ReadEntryKeys", "ReadEntry"]</e
     
     + Body
     
-            {"username": "user1", "password": "secret"}
+            {"username": "user1", "password": "secret", "role": "user"}
 
-+ Response 204
++ Response 201
 
     + Headers
 
@@ -152,11 +454,15 @@ List all usernames available in the system.
         ["admin", "user1"]
 
 
-## Single user [/users/{username}]
+## User [/users/{username}]
+
+All operations require the user role of <strong>admin</strong> in order to be performed.
+The only exception is fetching the user deatils - if the given username does match with the user that performs the request, the request will succeed.
 
 ### Get user details [GET]
 
 Returns details about the user account including available API keys.
+
 
 + Request (application/json)
 
@@ -174,8 +480,8 @@ Returns details about the user account including available API keys.
             "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJTdWIiOiJ1c2VyMSIsIkV4cCI6NjY3NjkxODc0NDk5MzE3MTkwfQ.y4PLZzhDK65qd6mU1x3m7ass1fuE1AGJhhyN-96DuaqtWCOeRzd8gppM62Pdemp3e69DefmZQtwammerTTegmw"
           ],
           "permissions": [
-            "ReadEntryKeys",
-            "ReadEntry"
+            "readEntryKeys",
+            "readEntry"
           ]
         }
 
@@ -183,6 +489,8 @@ Returns details about the user account including available API keys.
 ### Delete user [DELETE]
 
 Removes user account from the system.
+
+System must have at least one user with admin role assigned - if you will try to remove the last remaining administrator, the operation will fail.
 
 + Request (application/json)
 
