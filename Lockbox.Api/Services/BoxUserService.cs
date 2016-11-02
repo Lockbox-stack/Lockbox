@@ -49,6 +49,26 @@ namespace Lockbox.Api.Services
             Logger.Info($"User '{username}' was added to the box '{boxEntry.Name}'.");
         }
 
+        public async Task UpdateAsync(string box, string username, BoxRole? role = null, bool? isActive = null)
+        {
+            var boxEntry = await GetBoxAsyncOrFail(box);
+            var boxUser = boxEntry.GetUser(username);
+            if (boxUser == null)
+                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+
+            if (role.HasValue)
+                boxUser.SetRole(role.Value);
+            if (isActive.HasValue)
+            {
+                if(isActive.Value)
+                    boxUser.Activate();
+                else
+                    boxUser.Lock();
+            }
+            await _boxRepository.UpdateAsync(boxEntry);
+            Logger.Info($"User '{username}' was added updated in the box '{boxEntry.Name}'.");
+        }
+
         public async Task ActivateAsync(string box, string username)
         {
             var boxEntry = await GetBoxAsyncOrFail(box);

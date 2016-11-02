@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
 using Nancy;
@@ -10,25 +11,37 @@ namespace Lockbox.Api.Modules
 {
     public class BoxUserModule : ModuleBase
     {
-        public BoxUserModule(IBoxUserService boxUserService) : base("boxes/{box}/users")
+        private readonly IBoxService _boxService;
+
+        public BoxUserModule(IBoxService boxService, IBoxUserService boxUserService) : base("boxes/{box}/users")
         {
+            _boxService = boxService;
             this.RequiresAuthentication();
 
             Get("", async args =>
             {
-                RequiresAdmin();
-                var usernames = await boxUserService.GetUsernamesAsync((string)args.box);
+                var box = (string) args.box;
+                var hasAccess = await HasManagementAccessAsync(box);
+                if (!hasAccess)
+                    return HttpStatusCode.Forbidden;
+
+                var usernames = await boxUserService.GetUsernamesAsync(box);
 
                 return usernames ?? new List<string>();
             });
 
             Get("{username}", async args =>
             {
+                var box = (string) args.box;
                 var username = (string) args.username;
                 if (!username.Equals(CurrentUsername, StringComparison.CurrentCultureIgnoreCase))
-                    RequiresAdmin();
+                {
+                    var hasAccess = await HasManagementAccessAsync(box);
+                    if (!hasAccess)
+                        return HttpStatusCode.Forbidden;
+                }
 
-                var user = await boxUserService.GetAsync((string)args.box, username);
+                var user = await boxUserService.GetAsync(box, username);
                 if (user == null)
                     return HttpStatusCode.NotFound;
 
@@ -43,37 +56,44 @@ namespace Lockbox.Api.Modules
 
             Post("", async args =>
             {
-                RequiresAdmin();
-                var request = BindRequest<AddUserToBox>();
                 var box = (string) args.box;
+                var hasAccess = await HasManagementAccessAsync(box);
+                if (!hasAccess)
+                    return HttpStatusCode.Forbidden;
+
+                var request = BindRequest<AddUserToBox>();
                 await boxUserService.AddAsync(box, request.Username, request.Role);
 
                 return Created($"boxes/{box}/users/{request.Username}");
             });
 
-            Put("{username}/lock", async args =>
+            Put("{username}", async args =>
             {
-                RequiresAdmin();
-                await boxUserService.LockAsync((string) args.box, (string) args.username);
+                var box = (string) args.box;
+                var hasAccess = await HasManagementAccessAsync(box);
+                if (!hasAccess)
+                    return HttpStatusCode.Forbidden;
 
-                return HttpStatusCode.NoContent;
-            });
-
-            Put("{username}/activate", async args =>
-            {
-                RequiresAdmin();
-                await boxUserService.ActivateAsync((string)args.box, (string)args.username);
+                var request = BindRequest<UpdateUserInBox>();
+                await boxUserService.UpdateAsync(box, request.Username, request.Role, request.IsActive);
 
                 return HttpStatusCode.NoContent;
             });
 
             Delete("{username}", async args =>
             {
-                RequiresAdmin();
-                await boxUserService.DeleteAsync((string)args.box, (string) args.username);
+                var box = (string) args.box;
+                var hasAccess = await HasManagementAccessAsync(box);
+                if (!hasAccess)
+                    return HttpStatusCode.Forbidden;
+
+                await boxUserService.DeleteAsync(box, (string) args.username);
 
                 return HttpStatusCode.NoContent;
             });
         }
+
+        private async Task<bool> HasManagementAccessAsync(string box)
+            => await _boxService.HasManagementAccess(box, CurrentUsername);
     }
 }
