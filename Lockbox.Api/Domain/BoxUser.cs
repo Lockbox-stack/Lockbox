@@ -24,7 +24,7 @@ namespace Lockbox.Api.Domain
         {
         }
 
-        public BoxUser(User user, BoxRole role = BoxRole.User)
+        public BoxUser(User user, BoxRole role = BoxRole.BoxUser)
         {
             Username = user.Username.ToLowerInvariant();;
             Role = role;

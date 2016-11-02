@@ -41,7 +41,7 @@ namespace Lockbox.Api.Domain
             Name = name.Trim().ToLowerInvariant();
             Owner = owner.Username;
 
-            var user = new BoxUser(owner, BoxRole.Admin);
+            var user = new BoxUser(owner, BoxRole.BoxAdmin);
             if(owner.IsActive)
                 user.Activate();
 
@@ -57,7 +57,7 @@ namespace Lockbox.Api.Domain
 
             var user = GetUser(username);
 
-            return Owner == username || user.Role == BoxRole.Admin;
+            return Owner == username || user.Role == BoxRole.BoxAdmin;
         }
 
         public bool HasAccess(string username)

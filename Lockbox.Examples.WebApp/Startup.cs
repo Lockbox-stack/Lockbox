@@ -17,9 +17,9 @@ namespace Lockbox.Examples.WebApp
             var builder = new ConfigurationBuilder()
                 .AddLockbox(encryptionKey: "48q2Xc9FBEUExnrpYSMx",
                     apiUrl: "http://localhost:5000",
-                    apiKey: "lockbox_api_key",
-                    entryKey: "entry_key_for_json_configuration_object",
-                    isComplexObject: true);
+                    apiKey: "user_api_key",
+                    boxName: "default",
+                    entryKey: "appsettings");
             Configuration = builder.Build();
         }
 

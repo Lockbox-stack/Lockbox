@@ -2,7 +2,7 @@
 {
     public enum BoxRole
     {
-        User = 1,
-        Admin = 2
+        BoxUser = 1,
+        BoxAdmin = 2
     }
 }

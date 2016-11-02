@@ -38,10 +38,12 @@ namespace Lockbox.Api.Services
             if (boxUser != null)
                 throw new ArgumentException($"User {username} has been already added to box {box}.", nameof(username));
 
-            boxUser = new BoxUser(user, role.GetValueOrDefault(BoxRole.User));
+            boxUser = new BoxUser(user, role.GetValueOrDefault(BoxRole.BoxUser));
             if(user.IsActive)
                 boxUser.Activate();
 
+            boxUser.AddPermission(Permission.ReadEntryKeys);
+            boxUser.AddPermission(Permission.ReadEntry);
             boxEntry.AddUser(boxUser);
             await _boxRepository.UpdateAsync(boxEntry);
             Logger.Info($"User '{username}' was added to the box '{boxEntry.Name}'.");
@@ -82,9 +84,9 @@ namespace Lockbox.Api.Services
             {
                 throw new InvalidOperationException($"Box '{box}' owner '{boxUser.Username}' can not be deleted.");
             }
-            if (boxUser.Role == BoxRole.Admin)
+            if (boxUser.Role == BoxRole.BoxAdmin)
             {
-                var adminsCount = boxEntry.Users.Count(x => x.Role == BoxRole.Admin);
+                var adminsCount = boxEntry.Users.Count(x => x.Role == BoxRole.BoxAdmin);
                 if (adminsCount == 1)
                     throw new InvalidOperationException($"Can not delete the only one admin account in box {box}.");
             }

@@ -10,7 +10,7 @@ namespace Lockbox.Client
     {
         protected readonly HttpClient HttpClient;
 
-        protected LockboxClientBase(string apiUrl, string authenticationType, string token)
+        protected LockboxClientBase(string apiUrl, string apiKey)
         {
             HttpClient = new HttpClient
             {
@@ -18,7 +18,7 @@ namespace Lockbox.Client
             };
             HttpClient.DefaultRequestHeaders.Remove("Accept");
             HttpClient.DefaultRequestHeaders.Remove("Authorization");
-            HttpClient.DefaultRequestHeaders.Add("Authorization", $"{authenticationType} {token}");
+            HttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
             HttpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 

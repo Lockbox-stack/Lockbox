@@ -6,11 +6,11 @@ namespace Lockbox.Client
 {
     public interface ILockboxEntryClient
     {
-        Task<IEnumerable<string>> GetEntryKeysAsync();
-        Task<dynamic> GetEntryAsync(string key);
-        Task<T> GetEntryAsync<T>(string key);
-        Task<IDictionary<string, object>> GetEntryAsDictionaryAsync(string key);
-        Task CreateEntryAsync(string key, object value, TimeSpan? expiry = null);
-        Task DeleteEntryAsync(string key);
+        Task<IEnumerable<string>> GetEntryKeysAsync(string box);
+        Task<dynamic> GetEntryAsync(string box, string key);
+        Task<IDictionary<string, object>> GetEntryAsDictionaryAsync(string box, string key);
+        Task<T> GetEntryAsync<T>(string box, string key);
+        Task CreateEntryAsync(string box, string key, object value);
+        Task DeleteEntryAsync(string box, string key);
     }
 }

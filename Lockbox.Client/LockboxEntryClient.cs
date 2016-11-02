@@ -7,35 +7,34 @@ namespace Lockbox.Client
     public class LockboxEntryClient : LockboxClientBase, ILockboxEntryClient
     {
         public LockboxEntryClient(string encryptionKey, string apiUrl, string apiKey)
-            : base(apiUrl, "Bearer", apiKey)
+            : base(apiUrl, apiKey)
         {
             HttpClient.DefaultRequestHeaders.Add("X-Encryption-Key", encryptionKey);
         }
 
-        public async Task<IEnumerable<string>> GetEntryKeysAsync()
-            => await GetAsync<IEnumerable<string>>("keys");
+        public async Task<IEnumerable<string>> GetEntryKeysAsync(string box)
+            => await GetAsync<IEnumerable<string>>($"boxes/{box}/entries");
 
-        public async Task<dynamic> GetEntryAsync(string key)
-            => await GetEntryAsync<dynamic>(key);
+        public async Task<dynamic> GetEntryAsync(string box, string key)
+            => await GetEntryAsync<dynamic>(box, key);
 
-        public async Task<T> GetEntryAsync<T>(string key)
-            => await GetAsync<T>($"entries/{key}");
+        public async Task<IDictionary<string, object>> GetEntryAsDictionaryAsync(string box, string key)
+            => await GetEntryAsync<IDictionary<string, object>>(box, key);
 
-        public async Task<IDictionary<string, object>> GetEntryAsDictionaryAsync(string key)
-            => await GetEntryAsync<IDictionary<string, object>>(key);
+        public async Task<T> GetEntryAsync<T>(string box, string key)
+            => await GetAsync<T>($"boxes/{box}/entries/{key}");
 
-        public async Task CreateEntryAsync(string key, object value, TimeSpan? expiry = null)
+        public async Task CreateEntryAsync(string box, string key, object value)
         {
             var request = new
             {
                 key,
-                value,
-                expiry
+                value
             };
-            await PostAsync("entries", request);
+            await PostAsync($"boxes/{box}/entries", request);
         }
 
-        public async Task DeleteEntryAsync(string key)
-            => await DeleteAsync($"entries/{key}");
+        public async Task DeleteEntryAsync(string box, string key)
+            => await DeleteAsync($"boxes/{box}/entries/{key}");
     }
 }

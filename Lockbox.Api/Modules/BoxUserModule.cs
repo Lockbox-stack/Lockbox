@@ -45,9 +45,26 @@ namespace Lockbox.Api.Modules
             {
                 RequiresAdmin();
                 var request = BindRequest<AddUserToBox>();
-                await boxUserService.AddAsync((string)args.box, request.Username, request.Role);
+                var box = (string) args.box;
+                await boxUserService.AddAsync(box, request.Username, request.Role);
 
-                return Created($"users/{request.Username}");
+                return Created($"boxes/{box}/users/{request.Username}");
+            });
+
+            Put("{username}/lock", async args =>
+            {
+                RequiresAdmin();
+                await boxUserService.LockAsync((string) args.box, (string) args.username);
+
+                return HttpStatusCode.NoContent;
+            });
+
+            Put("{username}/activate", async args =>
+            {
+                RequiresAdmin();
+                await boxUserService.ActivateAsync((string)args.box, (string)args.username);
+
+                return HttpStatusCode.NoContent;
             });
 
             Delete("{username}", async args =>
