@@ -26,7 +26,7 @@ In other words - it's like [Vault](https://www.vaultproject.io), but much more s
 ## Security
 
 **Lockbox doesn't store encryption keys!** It only contains the encrypted value and its salt. Encryption key may be even unique (if you wish to do so) for each entry.
-It means that even if the Lockbox database was compromise, the attacker will not be able to decrypt the values.
+It means that even if the Lockbox database was compromised, the attacker will not be able to decrypt the values.
 
 Encryption key has to be provided via the custom HTTP Header *X-Encryption-Key* when creating a new entry and fetching the value of existing one.
 For the encryption purposes the [Triple DES](http://www.cryptographyworld.com/des.htm) algorithm is being used.
@@ -95,7 +95,7 @@ var host = new WebHostBuilder()
 host.Run();
 ```
 
-Start the application and open the web browwser at [http://localhost:5000](http://localhost:5000).
+Start the application and open the web browser at [http://localhost:5000](http://localhost:5000).
 
 
 **Examples**
