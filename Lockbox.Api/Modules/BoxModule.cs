@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Lockbox.Api.Extensions;
 using Lockbox.Api.Services;
 using Nancy;
 using Nancy.Security;
@@ -29,8 +30,8 @@ namespace Lockbox.Api.Modules
                 {
                     name = box.Name,
                     owner = box.Owner,
-                    createdAt = box.CreatedAt.ToString("g"),
-                    updatedAt = box.UpdatedAt.ToString("g"),
+                    createdAt = box.CreatedAt.FormatToString(),
+                    updatedAt = box.UpdatedAt.FormatToString(),
                     entries = box.Entries.Select(x => x.Key).ToList(),
                     users = box.Users.Select(x => new
                     {

@@ -4,8 +4,8 @@ namespace Lockbox.Client
 {
     public class LockboxAccountClient : LockboxClientBase, ILockboxAccountClient
     {
-        public LockboxAccountClient(string apiUrl, string basicAuthenticationToken)
-            : base(apiUrl, "Basic", basicAuthenticationToken)
+        public LockboxAccountClient(string apiUrl, string apiKey)
+            : base(apiUrl, apiKey)
         {
         }
 

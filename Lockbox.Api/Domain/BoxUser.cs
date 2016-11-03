@@ -24,11 +24,20 @@ namespace Lockbox.Api.Domain
         {
         }
 
-        public BoxUser(User user, BoxRole role = BoxRole.User)
+        public BoxUser(User user, BoxRole role = BoxRole.BoxUser)
         {
             Username = user.Username.ToLowerInvariant();;
-            Role = role;
+            SetRole(role);
             CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetRole(BoxRole role)
+        {
+            if (Role == role)
+                return;
+
+            Role = role;
             UpdatedAt = DateTime.UtcNow;
         }
 

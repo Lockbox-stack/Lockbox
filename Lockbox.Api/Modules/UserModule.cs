@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lockbox.Api.Extensions;
 using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
 using Nancy;
@@ -34,8 +35,8 @@ namespace Lockbox.Api.Modules
                 return new
                 {
                     username = user.Username,
-                    createdAt = user.CreatedAt.ToString("g"),
-                    updatedAt = user.UpdatedAt.ToString("g"),
+                    createdAt = user.CreatedAt.FormatToString(),
+                    updatedAt = user.UpdatedAt.FormatToString(),
                     role = user.Role.ToString().ToLowerInvariant(),
                     isActive = user.IsActive,
                     apiKeys = user.ApiKeys
