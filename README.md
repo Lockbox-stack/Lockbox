@@ -1,3 +1,5 @@
+![Lockbox](http://spetz.github.io/img/lockbox_logo.png)
+
 ####**Dead simple, centralized and secured storage for your credentials.**
 
 **What is Lockbox?**
