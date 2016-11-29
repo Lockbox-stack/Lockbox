@@ -12,11 +12,6 @@
     "emitEntryPoint": true
   },
   "dependencies": {
-    "Microsoft.NETCore.App": {
-      "type": "platform",
-      "version": "1.0.0"
-    },
-    "NETStandard.Library": "1.6.0",
     "Lockbox.Api": "1.0.0-*",
     "Autofac": "4.1.0",
     "Autofac.Extensions.DependencyInjection": "4.0.0",
@@ -30,12 +25,14 @@
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "NLog.Extensions.Logging": "1.0.0-*"
   },
-  "frameworks": {
-    "netcoreapp1.0": {
-      "imports": [
-        "dotnet5.6",
-        "dnxcore50"
-      ]
-    }
-  }
+	"frameworks": {
+		"netcoreapp1.1": {
+			"dependencies": {
+				"Microsoft.NETCore.App": {
+					"type": "platform",
+					"version": "1.1.0"
+				}
+			}
+		}
+	}
 }

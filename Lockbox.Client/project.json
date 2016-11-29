@@ -10,17 +10,18 @@
   },
   "version": "1.0.0-beta-1",
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
     "Microsoft.Extensions.Configuration.Binder": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0"
   },
   "frameworks": {
-    "netcoreapp1.0": {
-      "imports": [
-        "dotnet5.6",
-        "dnxcore50"
-      ]
-    }
+	  "netcoreapp1.1": {
+		  "dependencies": {
+			  "Microsoft.NETCore.App": {
+				  "type": "platform",
+				  "version": "1.1.0"
+			  }
+		  }
+	  }
   },
   "scripts": {
     "postcompile": [
