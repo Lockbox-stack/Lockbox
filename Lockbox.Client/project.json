@@ -10,8 +10,8 @@
   },
   "version": "1.0.0-beta-2",
   "dependencies": {
-    "Microsoft.Extensions.Configuration.Binder": "1.0.0",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0"
+    "Microsoft.Extensions.Configuration.Binder": "1.1.0",
+    "Microsoft.Extensions.Configuration.Json": "1.1.0"
   },
   "frameworks": {
 	  "netcoreapp1.1": {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lockbox.Client
@@ -17,9 +16,6 @@ namespace Lockbox.Client
 
         public async Task<dynamic> GetEntryAsync(string box, string key)
             => await GetEntryAsync<dynamic>(box, key);
-
-        public async Task<IDictionary<string, object>> GetEntryAsDictionaryAsync(string box, string key)
-            => await GetEntryAsync<IDictionary<string, object>>(box, key);
 
         public async Task<T> GetEntryAsync<T>(string box, string key)
             => await GetAsync<T>($"boxes/{box}/entries/{key}");
