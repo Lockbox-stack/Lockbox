@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Lockbox.Client.Parsers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
@@ -18,6 +15,18 @@ namespace Lockbox.Client.Extensions
         private static readonly string BoxNameEnvironmentVariable = "LOCKBOX_BOX_NAME";
         private static readonly string EntryKeyEnvironmentVariable = "LOCKBOX_ENTRY_KEY";
 
+        /// <summary>
+        /// Integrates Lockbox as a configuration source for the application settings.
+        /// Specified configuration will be fetched via HTTP request and added to the builder pipeline.
+        /// </summary>
+        /// <param name="builder">Instance of IConfigurationBuilder</param>
+        /// <param name="encryptionKey">Encryption key used for encrypting values. If omitted then "LOCKBOX_ENCRYPTION_KEY" environment variable will be used instead.</param>
+        /// <param name="apiUrl">URL of the Lockbox API. If omitted then "LOCKBOX_API_URL" environment variable will be used instead.</param>
+        /// <param name="apiKey">API key that will be used for authenticating HTTP requests to the Lockbox API. If omitted then "LOCKBOX_API_KEY" environment variable will be used instead.</param>
+        /// <param name="boxName">Name of the box that contains specified entry defined below. If omitted then "LOCKBOX_BOX_NAME" environment variable will be used instead.</param>
+        /// <param name="entryKey">Name of the entry within a box that will be used for getting configuration values. If omitted then "LOCKBOX_ENTRY_KEY" environment variable will be used instead.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static IConfigurationBuilder AddLockbox(this IConfigurationBuilder builder,
             string encryptionKey = null, 
             string apiUrl = null,
