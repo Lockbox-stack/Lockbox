@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
 using NLog;
-using NLog.Fluent;
 
 namespace Lockbox.Api.Services
 {
