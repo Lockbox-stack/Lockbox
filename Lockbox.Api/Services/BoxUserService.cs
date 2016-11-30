@@ -13,11 +13,13 @@ namespace Lockbox.Api.Services
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IBoxRepository _boxRepository;
         private readonly IUserRepository _userRepository;
+        private readonly FeatureSettings _featureSettings;
 
-        public BoxUserService(IBoxRepository boxRepository, IUserRepository userRepository)
+        public BoxUserService(IBoxRepository boxRepository, IUserRepository userRepository, FeatureSettings featureSettings)
         {
             _boxRepository = boxRepository;
             _userRepository = userRepository;
+            _featureSettings = featureSettings;
         }
 
         public async Task<BoxUser> GetAsync(string box, string username)
@@ -37,6 +39,12 @@ namespace Lockbox.Api.Services
             var boxUser = boxEntry.GetUser(username);
             if (boxUser != null)
                 throw new ArgumentException($"User {username} has been already added to box {box}.", nameof(username));
+
+            if (boxEntry.Users.Count() >= _featureSettings.UsersPerBoxLimit)
+            {
+                throw new InvalidOperationException($"Box: '{box}' already contains " +
+                                                    $"{_featureSettings.UsersPerBoxLimit} users.");
+            }
 
             boxUser = new BoxUser(user, role.GetValueOrDefault(BoxRole.BoxUser));
             if(user.IsActive)

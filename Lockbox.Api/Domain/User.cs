@@ -8,12 +8,10 @@ namespace Lockbox.Api.Domain
     public class User
     {
         private ISet<string> _apiKeys = new HashSet<string>();
-
         public string Username { get; protected set; }
         public string Password { get; protected set; }
         public string Salt { get; protected set; }
         public Role Role { get; protected set; }
-
         public bool IsActive { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
@@ -32,8 +30,10 @@ namespace Lockbox.Api.Domain
         {
             if (username.Empty())
                 throw new ArgumentException("Username can not be empty.", nameof(username));
+            if (username.Length > 50)
+                throw new ArgumentException("Username can not have more than 50 characters.", nameof(username));
 
-            Username = username.Trim().ToLowerInvariant();;
+            Username = username.Trim().ToLowerInvariant();
             Role = role;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
@@ -61,6 +61,8 @@ namespace Lockbox.Api.Domain
         {
             if (password.Empty())
                 throw new ArgumentException("Password can not be empty.", nameof(password));
+            if (password.Length > 100)
+                throw new ArgumentException("Password can not have more than 100 characters.", nameof(password));
 
             var salt = encrypter.GetSalt(password);
             var hash = encrypter.GetHash(password, salt);
@@ -95,7 +97,6 @@ namespace Lockbox.Api.Domain
                 throw new ArgumentException("API key can not be empty.", nameof(apiKey));
             if (!ApiKeys.Contains(apiKey))
                 return;
-
 
             _apiKeys.Remove(apiKey);
             UpdatedAt = DateTime.UtcNow;

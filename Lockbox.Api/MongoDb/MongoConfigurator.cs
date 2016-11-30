@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Conventions;
+using MongoDB.Bson.Serialization.Options;
 
 namespace Lockbox.Api.MongoDb
 {
@@ -28,7 +29,8 @@ namespace Lockbox.Api.MongoDb
             {
                 new IgnoreExtraElementsConvention(true),
                 new EnumRepresentationConvention(BsonType.String),
-                new CamelCaseElementNameConvention()
+                new CamelCaseElementNameConvention(),
+                new DictionaryRepresentationConvention(DictionaryRepresentation.ArrayOfArrays)
             };
         }
     }

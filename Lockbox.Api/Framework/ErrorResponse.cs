@@ -37,7 +37,6 @@ namespace Lockbox.Api.Framework
             else if (exception is NullReferenceException)
                 statusCode = HttpStatusCode.BadRequest;
 
-
             var error = ErrorMessage.FromExceptions(exception);
             var response = new ErrorResponse(error, environment) {StatusCode = statusCode};
             return response;

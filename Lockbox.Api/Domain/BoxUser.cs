@@ -7,7 +7,6 @@ namespace Lockbox.Api.Domain
     public class BoxUser
     {
         private ISet<Permission> _permissions = new HashSet<Permission>();
-
         public string Username { get; protected set; }
         public BoxRole Role { get; protected set; }
         public bool IsActive { get; protected set; }
@@ -26,7 +25,7 @@ namespace Lockbox.Api.Domain
 
         public BoxUser(User user, BoxRole role = BoxRole.BoxUser)
         {
-            Username = user.Username.ToLowerInvariant();;
+            Username = user.Username.ToLowerInvariant();
             SetRole(role);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
@@ -61,7 +60,7 @@ namespace Lockbox.Api.Domain
 
         public void DeleteAllPermissions()
         {
-            if(!_permissions.Any())
+            if (!_permissions.Any())
                 return;
 
             _permissions.Clear();
