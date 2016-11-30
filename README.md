@@ -57,7 +57,7 @@ On the other hand, a secret key is being stored by Lockbox API and is used for t
 
 ## Docker way
 
-Run docker container which requires external MongoDB instance (e.g. running on localhost):
+Run docker container which requires an external [MongoDB](https://www.mongodb.com) instance (e.g. running on localhost):
 ```
 docker pull lockbox/lockbox.server
 docker run -p 5000:5000 lockbox.server 
@@ -79,10 +79,10 @@ In order to run the Lockbox you need to have installed:
 - [MongoDB](https://www.mongodb.com/download-center)
 
 
-Create a new .NET Core application and execute the following command:
+Create a new [.NET Core](https://www.microsoft.com/net/core) application and execute the following command via NuGet package manager:
 
 ```
-Install-Package Lockbox.Api -Pre
+Install-Package Lockbox.Api
 ```
 
 Change your **Program.cs** code to look like this:
@@ -116,12 +116,11 @@ In order to play with Lockbox examples, please read the [API docs](http://docs.l
 **Integrations**
 ----------------
 
-
 ```
-Install-Package Lockbox.Client -Pre
+Install-Package Lockbox.Client
 ```
 
-Create a new .NET Core Web application and within the **Startup.cs** add the following code:
+Create a new [.NET Core](https://www.microsoft.com/net/core) Web application and add the following code to the **Startup.cs**:
 
 ```
 public IConfiguration Configuration { get; set; }
@@ -139,7 +138,6 @@ public Startup(IHostingEnvironment env)
 ```
 
 When everything is set correctly, you will see that your app configuration gets updated based on the encrypted value stored in Lockbox.
-
 
 **Settings**
 ----------------
