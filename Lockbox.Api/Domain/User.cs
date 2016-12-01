@@ -30,6 +30,8 @@ namespace Lockbox.Api.Domain
         {
             if (username.Empty())
                 throw new ArgumentException("Username can not be empty.", nameof(username));
+            if(!username.IsValidName())
+                throw new ArgumentException($"Username '{username}' is invalid.", nameof(username));
             if (username.Length > 50)
                 throw new ArgumentException("Username can not have more than 50 characters.", nameof(username));
 

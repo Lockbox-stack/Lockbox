@@ -27,9 +27,9 @@ namespace Lockbox.Api.Services
         {
             var user = await _userRepository.GetAsync(username);
             if (user == null)
-                throw new ArgumentNullException(nameof(user), $"User {username} has not been found.");
+                throw new ArgumentNullException(nameof(user), $"User '{username}' has not been found.");
             if (!user.IsActive)
-                throw new AuthenticationException($"User {username} is not active.");
+                throw new AuthenticationException($"User '{username}' is not active.");
 
             var apiKey = _jwtTokenHandler.Create(username, expiry);
             user.AddApiKey(apiKey);
@@ -53,9 +53,9 @@ namespace Lockbox.Api.Services
             if (user == null)
                 throw new ArgumentNullException(nameof(user), "User has not been found for given API key.");
             if (!user.IsActive)
-                throw new AuthenticationException($"User {user.Username} is not active.");
+                throw new AuthenticationException($"User '{user.Username}' is not active.");
             if (user.ApiKeys.Count() == 1)
-                throw new InvalidOperationException($"User {user.Username} must have at least one API key.");
+                throw new InvalidOperationException($"User '{user.Username}' must have at least one API key.");
 
             user.DeleteApiKey(apiKey);
             await _userRepository.UpdateAsync(user);

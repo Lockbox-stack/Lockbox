@@ -28,7 +28,7 @@ namespace Lockbox.Api.Services
         {
             var entryBox = await _boxRepository.GetAsync(box);
             if (entryBox == null)
-                throw new ArgumentException($"Box {box} has not been found.");
+                throw new ArgumentException($"Box '{box}' has not been found.");
 
             var entry = entryBox.GetEntry(key);
             if (entry == null)
@@ -46,7 +46,7 @@ namespace Lockbox.Api.Services
         {
             var entryBox = await _boxRepository.GetAsync(box);
             if (entryBox == null)
-                throw new ArgumentException($"Box {box} has not been found.");
+                throw new ArgumentException($"Box '{box}' has not been found.");
 
             if (entryBox.Entries.Count() >= _featureSettings.EntriesPerBoxLimit)
             {

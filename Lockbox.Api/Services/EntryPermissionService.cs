@@ -54,23 +54,23 @@ namespace Lockbox.Api.Services
         {
             var entryBox = await _boxRepository.GetAsync(box);
             if (entryBox == null)
-                throw new ArgumentException($"Box {box} has not been found.");
+                throw new ArgumentException($"Box '{box}' has not been found.");
 
             var user = await _userRepository.GetAsync(username);
             if (user == null)
-                throw new ArgumentException($"User {username} has not been found.", nameof(username));
+                throw new ArgumentException($"User '{username}' has not been found.", nameof(username));
             if (!user.IsActive)
-                throw new AuthenticationException($"User {username} is not active.");
+                throw new AuthenticationException($"User '{username}' is not active.");
             if (user.Role == Role.Admin)
                 return;
 
             var boxUser = entryBox.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentException($"User {username} has not been found in box {box}.", nameof(username));
+                throw new ArgumentException($"User '{username}' has not been found in box {box}.", nameof(username));
             if (boxUser.Permissions.Contains(permission))
                 return;
 
-            throw new AuthenticationException($"User {username} does not have permission {permission} in box {box}.");
+            throw new AuthenticationException($"User '{username}' does not have permission '{permission}' in box '{box}'.");
         }
     }
 }

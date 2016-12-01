@@ -23,7 +23,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await GetBoxAsyncOrFail(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+                throw new ArgumentNullException(nameof(boxUser), $"User '{username}' has not been found in box '{box}'.");
 
             return boxUser.Permissions.ToList();
         }
@@ -33,7 +33,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await GetBoxAsyncOrFail(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+                throw new ArgumentNullException(nameof(boxUser), $"User '{username}' has not been found in box '{box}'.");
 
             boxUser.DeleteAllPermissions();
             await _boxRepository.UpdateAsync(boxEntry);
@@ -45,7 +45,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await GetBoxAsyncOrFail(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+                throw new ArgumentNullException(nameof(boxUser), $"User '{username}' has not been found in box {box}.");
 
             boxUser.DeleteAllPermissions();
             var selectedPermissions = permissions?.ToList() ?? new List<Permission>();
@@ -58,7 +58,7 @@ namespace Lockbox.Api.Services
         {
             var boxEntry = await _boxRepository.GetAsync(box);
             if (boxEntry == null)
-                throw new ArgumentNullException(nameof(boxEntry), $"Box {box} has not been found.");
+                throw new ArgumentNullException(nameof(boxEntry), $"Box '{box}' has not been found.");
 
             return boxEntry;
         }

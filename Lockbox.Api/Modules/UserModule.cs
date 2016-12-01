@@ -10,7 +10,7 @@ namespace Lockbox.Api.Modules
 {
     public class UserModule : ModuleBase
     {
-        public UserModule(IUserService userService) : base("users")
+        public UserModule(IUserService userService, FeatureSettings featureSettings) : base("users")
         {
             this.RequiresAuthentication();
 
@@ -45,7 +45,10 @@ namespace Lockbox.Api.Modules
 
             Post("", async args =>
             {
-                RequiresAdmin();
+                if (featureSettings.RequireAdminToCreateUser)
+                {
+                    RequiresAdmin();
+                }
                 var request = BindRequest<CreateUser>();
                 await userService.CreateAsync(request.Username, request.Password, request.Role);
 

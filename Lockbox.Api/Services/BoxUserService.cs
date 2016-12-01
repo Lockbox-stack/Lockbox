@@ -38,7 +38,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await GetBoxAsyncOrFail(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser != null)
-                throw new ArgumentException($"User {username} has been already added to box {box}.", nameof(username));
+                throw new ArgumentException($"User '{username}' has been already added to box '{box}'.", nameof(username));
 
             if (boxEntry.Users.Count() >= _featureSettings.UsersPerBoxLimit)
             {
@@ -62,7 +62,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await GetBoxAsyncOrFail(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+                throw new ArgumentNullException(nameof(boxUser), $"User '{username}' has not been found in box '{box}'.");
 
             if (role.HasValue)
                 boxUser.SetRole(role.Value);
@@ -82,7 +82,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await GetBoxAsyncOrFail(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+                throw new ArgumentNullException(nameof(boxUser), $"User '{username}' has not been found in box {box}.");
 
             boxUser.Activate();
             await _boxRepository.UpdateAsync(boxEntry);
@@ -94,7 +94,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await GetBoxAsyncOrFail(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+                throw new ArgumentNullException(nameof(boxUser), $"User '{username}' has not been found in box {box}.");
 
             boxUser.Lock();
             await _boxRepository.UpdateAsync(boxEntry);
@@ -106,7 +106,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await GetBoxAsyncOrFail(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+                throw new ArgumentNullException(nameof(boxUser), $"User '{username}' has not been found in box {box}.");
 
             if (boxEntry.Owner.Equals(boxUser.Username))
             {
@@ -127,7 +127,7 @@ namespace Lockbox.Api.Services
         {
             var boxEntry = await _boxRepository.GetAsync(box);
             if (boxEntry == null)
-                throw new ArgumentNullException(nameof(boxEntry), $"Box {box} has not been found.");
+                throw new ArgumentNullException(nameof(boxEntry), $"Box '{box}' has not been found.");
 
             return boxEntry;
         }
@@ -137,7 +137,7 @@ namespace Lockbox.Api.Services
             var boxEntry = await _boxRepository.GetAsync(box);
             var boxUser = boxEntry.GetUser(username);
             if (boxUser == null)
-                throw new ArgumentNullException(nameof(boxUser), $"User {username} has not been found in box {box}.");
+                throw new ArgumentNullException(nameof(boxUser), $"User '{username}' has not been found in box {box}.");
 
             return boxUser;
         }
@@ -146,7 +146,7 @@ namespace Lockbox.Api.Services
         {
             var user = await _userRepository.GetAsync(username);
             if (user == null)
-                throw new ArgumentNullException(nameof(user), $"User {username} has not been found.");
+                throw new ArgumentNullException(nameof(user), $"User '{username} has not been found.");
 
             return user;
         }

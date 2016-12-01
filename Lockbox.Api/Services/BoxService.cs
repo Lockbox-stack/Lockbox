@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
@@ -14,11 +15,13 @@ namespace Lockbox.Api.Services
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IBoxRepository _boxRepository;
         private readonly IUserRepository _userRepository;
+        private readonly FeatureSettings _featureSettings;
 
-        public BoxService(IBoxRepository boxRepository, IUserRepository userRepository)
+        public BoxService(IBoxRepository boxRepository, IUserRepository userRepository, FeatureSettings featureSettings)
         {
             _boxRepository = boxRepository;
             _userRepository = userRepository;
+            _featureSettings = featureSettings;
         }
 
         public async Task<Box> GetAsync(string name)
@@ -57,13 +60,18 @@ namespace Lockbox.Api.Services
 
             var user = await _userRepository.GetAsync(owner);
             if (user == null)
-                throw new ArgumentNullException(nameof(user), $"User {owner} has not been found.");
+                throw new ArgumentNullException(nameof(user), $"User '{owner}' has not been found.");
             if (!user.IsActive)
-                throw new AuthenticationException($"User {owner} is not active.");
+                throw new AuthenticationException($"User '{owner}' is not active.");
+
+            var boxes = await GetNamesForUserAsync(owner);
+            var boxesLimit = _featureSettings.BoxesPerUserLimit;
+            if (boxes.Count() >= boxesLimit && user.Role == Role.User)
+                throw new AuthenticationException($"User '{owner}' can not create more than {boxesLimit} box(es).");
 
             var entryBox = await _boxRepository.GetAsync(name);
             if (entryBox != null)
-                throw new ArgumentException($"Box {name} already exists.", nameof(name));
+                throw new ArgumentException($"Box '{name}' already exists.", nameof(name));
 
             var box = new Box(name, user);
             await _boxRepository.AddAsync(box);
@@ -74,7 +82,7 @@ namespace Lockbox.Api.Services
         {
             var entryBox = await _boxRepository.GetAsync(name);
             if (entryBox == null)
-                throw new ArgumentNullException($"Box {name} has not been found.");
+                throw new ArgumentNullException($"Box '{name}' has not been found.");
 
             await _boxRepository.DeleteAsync(name);
             Logger.Info($"Box '{entryBox.Name}' was deleted.");
@@ -84,10 +92,10 @@ namespace Lockbox.Api.Services
         {
             var entryBox = await _boxRepository.GetAsync(box);
             if (entryBox == null)
-                throw new ArgumentNullException($"Box {box} has not been found.");
+                throw new ArgumentNullException($"Box '{box}' has not been found.");
             var user = await _userRepository.GetAsync(username);
             if (user == null)
-                throw new ArgumentNullException(nameof(user), $"User {username} has not been found.");
+                throw new ArgumentNullException(nameof(user), $"User '{username}' has not been found.");
 
             return new Tuple<Box, User>(entryBox, user);
         }
