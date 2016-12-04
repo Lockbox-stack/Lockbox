@@ -86,7 +86,9 @@ namespace Lockbox.Api.Framework
             response.WithHeader("Access-Control-Allow-Origin", "*")
                 .WithHeader("Access-Control-Allow-Methods", "POST,PUT,GET,OPTIONS,DELETE")
                 .WithHeader("Access-Control-Allow-Headers", "Authorization,Accept,Origin," +
-                                                            "Connection,Content-Type,User-Agent,X-Requested-With");
+                                                            "Connection,Content-Type,User-Agent,X-Requested-With,X-API-Key")
+                .WithHeader("Access-Control-Expose-Headers", "X-API-Key");
+            ;
         }
     }
 }
