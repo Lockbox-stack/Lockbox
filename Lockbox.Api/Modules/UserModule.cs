@@ -13,7 +13,6 @@ namespace Lockbox.Api.Modules
     {
         public UserModule(IUserService userService, FeatureSettings featureSettings) : base("users")
         {
-            this.RequiresAuthentication();
 
             Get("", async args =>
             {
@@ -25,6 +24,7 @@ namespace Lockbox.Api.Modules
 
             Get("{username}", async args =>
             {
+                this.RequiresAuthentication();
                 var username = (string) args.username;
                 if (!username.Equals(CurrentUsername, StringComparison.CurrentCultureIgnoreCase))
                     RequiresAdmin();
