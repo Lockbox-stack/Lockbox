@@ -1,11 +1,14 @@
 ![Lockbox](http://spetz.github.io/img/lockbox_logo.png)
 
 ####**Dead simple, centralized and secured storage for your credentials.**
+####**[getlockbox.com](https://getlockbox.com)**
 
 **What is Lockbox?**
 ----------------
 
-**Lockbox** is a dead simple, **cross-platform** framework (API & Client), built to **save your credentials** (e.g. app settings) in a **centralized and secured storage**.
+Having nightmares about **storing** and **deplyoing** the **vulnerable configurations** of your applications?
+
+**Lockbox** is a dead simple, **cross-platform** library (API & Client), built to **save your credentials** (e.g. app settings) in a **centralized and secured storage**.
 
 What does it mean in practice? Imagine the following scenario - you have your application configuration file containing vulnerable data. 
 Now, how do you deploy it to the production environment? Keep credentials in private repository? Manually update the settings on your server? Encrypt and decrypt the file and re-upload to the hosting enviroment?
@@ -46,11 +49,12 @@ On the other hand, a secret key is being stored by Lockbox API and is used for t
 
 **Resources**
 ----------------
+- [Wiki](https://github.com/Lockbox-stack/Lockbox/wiki)
 - [API documentation](http://docs.lockbox.apiary.io)
 - [Lockbox Sandbox API](https://sandbox-api.getlockbox.com/)
 - [Postman local requests](https://www.getpostman.com/collections/4f6336f107cc8a6a6721)
 - [Postman sandbox requests](https://www.getpostman.com/collections/e8ec27a2bb4fe7ab66fb)
-
+- [CURL requests examples](https://github.com/Lockbox-stack/Lockbox/wiki/CURL-requests-examples)
 
 **Quick start**
 ----------------
@@ -63,7 +67,7 @@ docker pull lockbox/lockbox.server
 docker run -p 5000:5000 lockbox.server 
 ```
 
-Or use the docker compose:
+Or use the _docker compose_ to build [Lockbox.Server](https://github.com/Lockbox-stack/Lockbox.Server):
 
 ```
 git clone https://github.com/Lockbox-stack/Lockbox.Server
@@ -133,6 +137,7 @@ public Startup(IHostingEnvironment env)
             apiKey: "user_api_key",                    
             boxName: "box_name",
             entryKey: "entry_name_for_app_settings");
+
     Configuration = builder.Build();
 }
 ```
@@ -142,7 +147,28 @@ When everything is set correctly, you will see that your app configuration gets 
 **Settings**
 ----------------
 
-Although you can provide all of the settings directly in the code, you may also use the system environment variables which might be especially useful while running the Lockbox via Docker container.
+You can provide all of the settings directly in the code via _appsettings.json_ file for the Lockbox.API:
+
+```
+{
+	"feature": {
+		"entrySizeBytesLimit": 524288,
+		"entriesPerBoxLimit": 20,
+		"usersPerBoxLimit": 20,
+		"boxesPerUserLimit": 3,
+		"requireAdminToCreateUser": false
+	},
+	"lockbox": {
+		"secretKey": "your_secret_key"
+	},
+	"mongoDb": {
+		"connectionString": "mongodb://localhost:27017",
+		"database": "Lockbox"
+	}
+}
+```
+
+Although, you may also use the system environment variables which might be especially useful while running the Lockbox via [Docker container](https://hub.docker.com/r/lockbox/lockbox.server/).
 
 **Lockbox.Api**
 
@@ -160,3 +186,8 @@ LOCKBOX_API_KEY
 LOCKBOX_BOX_NAME
 LOCKBOX_ENTRY_KEY
 ```
+
+**Contribute**
+----------------
+
+Want to contribute? Please check the **[contribution guidelines](https://github.com/lockbox-stack/lockbox/blob/master/CONTRIBUTING.md)**. 
