@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lockbox.Api.Extensions;
 using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
@@ -51,8 +52,10 @@ namespace Lockbox.Api.Modules
                 }
                 var request = BindRequest<CreateUser>();
                 await userService.CreateAsync(request.Username, request.Password, request.Role);
+                var user = await userService.GetAsync(request.Username);
 
-                return Created($"users/{request.Username}");
+                return Created($"users/{request.Username}")
+                    .WithHeader("X-API-Key", user.ApiKeys.First());
             });
 
             Delete("{username}", async args =>
