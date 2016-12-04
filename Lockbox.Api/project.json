@@ -7,7 +7,7 @@
     "projectUrl": "https://github.com/Lockbox-stack/Lockbox",
     "licenseUrl": "https://github.com/Lockbox-stack/Lockbox/blob/master/README.md"
   },
-  "version": "1.0.0-beta-3",
+  "version": "1.0.0",
   "dependencies": {
     "Autofac": "4.1.0",
     "Autofac.Extensions.DependencyInjection": "4.0.0",
