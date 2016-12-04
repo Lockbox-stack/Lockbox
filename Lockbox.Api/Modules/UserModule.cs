@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lockbox.Api.Domain;
 using Lockbox.Api.Extensions;
 using Lockbox.Api.Requests;
 using Lockbox.Api.Services;
@@ -46,12 +47,14 @@ namespace Lockbox.Api.Modules
 
             Post("", async args =>
             {
-                if (featureSettings.RequireAdminToCreateUser)
-                {
-                    RequiresAdmin();
-                }
                 var request = BindRequest<CreateUser>();
-                await userService.CreateAsync(request.Username, request.Password, request.Role);
+                var role = request.Role.GetValueOrDefault(Role.User);
+                if (featureSettings.RequireAdminToCreateUser)
+                    RequiresAdmin();
+                else
+                    role = Role.User;
+
+                await userService.CreateAsync(request.Username, request.Password, role);
                 var user = await userService.GetAsync(request.Username);
 
                 return Created($"users/{request.Username}")
