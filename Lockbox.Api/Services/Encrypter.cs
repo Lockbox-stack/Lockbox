@@ -10,8 +10,7 @@ namespace Lockbox.Api.Services
     public class Encrypter : IEncrypter
     {
         private static readonly int DeriveBytesIterationsCount = 10000;
-        private static readonly int MinSaltSize = 20;
-        private static readonly int MaxSaltSize = 40;
+        private static readonly int SaltSize = 40;
         private static readonly int MinSecureKeySize = 40;
         private static readonly int MaxSecureKeySize = 60;
         private static readonly Random Random = new Random();
@@ -34,8 +33,7 @@ namespace Lockbox.Api.Services
                 throw new ArgumentException("Can not generate salt from empty value.", nameof(value));
 
             var random = new Random();
-            var saltSize = random.Next(MinSaltSize, MaxSaltSize);
-            var saltBytes = new byte[saltSize];
+            var saltBytes = new byte[SaltSize];
 
             var rng = RandomNumberGenerator.Create();
             rng.GetBytes(saltBytes);
@@ -50,13 +48,9 @@ namespace Lockbox.Api.Services
             if (salt.Empty())
                 throw new ArgumentException("Can not use an empty salt from hashing value.", nameof(value));
 
-            using (var sha512 = SHA512.Create())
-            {
-                var bytes = Encoding.Unicode.GetBytes(value + salt);
-                var hash = sha512.ComputeHash(bytes);
+            var pbkdf2 = new Rfc2898DeriveBytes(value, GetBytes(salt), DeriveBytesIterationsCount);
 
-                return Convert.ToBase64String(hash);
-            }
+            return Convert.ToBase64String(pbkdf2.GetBytes(SaltSize));
         }
 
         public string Encrypt(string value, string salt, string encryptionKey)
@@ -68,15 +62,14 @@ namespace Lockbox.Api.Services
             if (encryptionKey.Empty())
                 throw new ArgumentException("Encryption key can not be empty.", nameof(encryptionKey));
 
-            var algorithm = TripleDES.Create();
-            var rgb = new Rfc2898DeriveBytes(encryptionKey, GetBytes(salt), DeriveBytesIterationsCount);
-            var rgbKey = rgb.GetBytes(algorithm.KeySize >> 3);
-            var rgbIv = rgb.GetBytes(algorithm.BlockSize >> 3);
-            var transform = algorithm.CreateEncryptor(rgbKey, rgbIv);
-
+            var algorithm = Aes.Create();
+            var pbkdf2 = new Rfc2898DeriveBytes(encryptionKey, GetBytes(salt), DeriveBytesIterationsCount);
+            var rgbKey = pbkdf2.GetBytes(algorithm.KeySize >> 3);
+            var rgbIv = pbkdf2.GetBytes(algorithm.BlockSize >> 3);
+            var encryptor = algorithm.CreateEncryptor(rgbKey, rgbIv);
             var buffer = new MemoryStream();
             using (var writer = new StreamWriter(new CryptoStream(buffer,
-                transform, CryptoStreamMode.Write), Encoding.Unicode))
+                encryptor, CryptoStreamMode.Write), Encoding.Unicode))
             {
                 writer.Write(value);
             }
@@ -93,24 +86,23 @@ namespace Lockbox.Api.Services
             if (encryptionKey.Empty())
                 throw new ArgumentException("Encryption key can not be empty.", nameof(encryptionKey));
 
-            var algorithm = TripleDES.Create();
-            var rgb = new Rfc2898DeriveBytes(encryptionKey, GetBytes(salt), DeriveBytesIterationsCount);
-            var rgbKey = rgb.GetBytes(algorithm.KeySize >> 3);
-            var rgbIv = rgb.GetBytes(algorithm.BlockSize >> 3);
-            var transform = algorithm.CreateDecryptor(rgbKey, rgbIv);
-
+            var algorithm = Aes.Create();
+            var pbkdf2 = new Rfc2898DeriveBytes(encryptionKey, GetBytes(salt), DeriveBytesIterationsCount);
+            var rgbKey = pbkdf2.GetBytes(algorithm.KeySize >> 3);
+            var rgbIv = pbkdf2.GetBytes(algorithm.BlockSize >> 3);
+            var decryptor = algorithm.CreateDecryptor(rgbKey, rgbIv);
             var buffer = new MemoryStream(Convert.FromBase64String(value));
             using (var reader = new StreamReader(new CryptoStream(buffer,
-                transform, CryptoStreamMode.Read), Encoding.Unicode))
+                decryptor, CryptoStreamMode.Read), Encoding.Unicode))
             {
                 return reader.ReadToEnd();
             }
         }
 
-        private static byte[] GetBytes(string str)
+        private static byte[] GetBytes(string value)
         {
-            var bytes = new byte[str.Length*sizeof(char)];
-            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            var bytes = new byte[value.Length*sizeof(char)];
+            Buffer.BlockCopy(value.ToCharArray(), 0, bytes, 0, bytes.Length);
 
             return bytes;
         }

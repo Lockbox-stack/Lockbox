@@ -77,9 +77,8 @@ namespace Lockbox.Api.Domain
         public bool ValidatePassword(string password, IEncrypter encrypter)
         {
             var hashedPassword = encrypter.GetHash(password, Salt);
-            var areEqual = Password.SequenceEqual(hashedPassword);
 
-            return areEqual;
+            return Password.Equals(hashedPassword);
         }
 
         public void AddApiKey(string apiKey)
