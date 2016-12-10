@@ -34,7 +34,7 @@ In other words - it's like [Vault](https://www.vaultproject.io), but much more s
 It means that even if the Lockbox database was compromised, the attacker will not be able to decrypt the values.
 
 Encryption key has to be provided via the custom HTTP Header *X-Encryption-Key* when creating a new entry and fetching the value of existing one.
-For the encryption purposes the [Triple DES](http://www.cryptographyworld.com/des.htm) algorithm is being used.
+For the encryption purposes the [AES](https://pl.wikipedia.org/wiki/Advanced_Encryption_Standard) algorithm is being used.
 
 On the other hand, a secret key is being stored by Lockbox API and is used for the API key authentication mechanism based on [JWT](https://jwt.io) (JSON Web Tokens). 
 
@@ -171,7 +171,6 @@ You can provide all of the settings directly in the code via _appsettings.json_ 
 Although, you may also use the system environment variables which might be especially useful while running the Lockbox via [Docker container](https://hub.docker.com/r/lockbox/lockbox.server/).
 
 **Lockbox.Api**
-
 ```
 LOCKBOX_SECRET_KEY
 LOCKBOX_MONGO_CONNECTION_STRING
