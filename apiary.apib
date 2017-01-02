@@ -56,7 +56,7 @@ Generates an additional API key for the user. <em>Expiry</em> is an additional p
         }
 
 
-## API key [/api-keys/{apiKEy}]
+## API key [/api-keys/{apiKey}]
 
 ### Delete API key [DELETE]
 
@@ -71,6 +71,25 @@ User must have at least one API key assigned - if you will try to remove the las
             Authorization: Bearer API_KEY
 
 + Response 204 (application/json)
+
+## Authentication [/authenticate]
+
+### Authenticate [POST]
+
+Authenticates the user if the provided credentials are valid. Return an object containing authentication token and it's expiry (by default 7 days) as a ticks using epoch format. 
+
++ Request (application/json)
+
+    + Body
+    
+            {"username": "user1", "password": "secret"}
+
++ Response 200 (application/json)
+
+        {
+            "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJTdWIiOiJhZG1pbiIsIkV4cCI6NjY3NjkxODY4NDI3MzA5MTYwfQ.DfwQx4LHNwQqWsaZEStfOzQC-eQKxbsBOZjm5bMeaX18j3Nu1tby9oYQ2IybzCdCP7XvJfaGHOV1rJQT5xEJXQ",
+            "expiry": 1234567890
+        }
 
 ## Boxes [/boxes]
 
@@ -414,11 +433,11 @@ It is considered a good practice to use a separate user accounts with different 
 
 You can also skip this part and use the root API key directly (from admin account).
 
-All operations require the user role of <strong>admin</strong> in order to be performed.
+All operations require the user role of <strong>admin</strong> in order to be performed unless the application setting: <em>requireAdminToCreateUser</em> is set to <em>false</em>.
 
 ### Create a new user [POST]
 
-Create a new user with a single API key.
+Create a new user with a single API key being returned within a <strong>X-API-Key</strong> header.
 You may also include an optional parameter <em>Role</em> (user, admin) - if not specified the default user role will be assigned.
 
 + Request (application/json)
@@ -435,6 +454,7 @@ You may also include an optional parameter <em>Role</em> (user, admin) - if not 
 
     + Headers
 
+            X-API-Key: API_KEY
             Location: /users/user1
 
 
