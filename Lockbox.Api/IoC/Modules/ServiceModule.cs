@@ -9,6 +9,7 @@ namespace Lockbox.Api.IoC.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<ApiKeyService>().As<IApiKeyService>();
+            builder.RegisterType<AuthenticationService>().As<IAuthenticationService>();
             builder.RegisterType<BoxService>().As<IBoxService>();
             builder.RegisterType<BoxUserPermissionsService>().As<IBoxUserPermissionsService>();
             builder.RegisterType<BoxUserService>().As<IBoxUserService>();

@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Security.Principal;
 using Autofac;
+using Lockbox.Api.Domain;
 using Lockbox.Api.Extensions;
 using Lockbox.Api.IoC;
 using Lockbox.Api.MongoDb;
@@ -60,23 +61,31 @@ namespace Lockbox.Api.Framework
         {
             var jwtTokenHandler = container.Resolve<IJwtTokenHandler>();
             var apiKeyService = container.Resolve<IApiKeyService>();
+            var userService = container.Resolve<IUserService>();
             var configuration = new StatelessAuthenticationConfiguration(ctx =>
             {
-                var apikey = jwtTokenHandler.GetFromAuthorizationHeader(ctx.Request.Headers.Authorization);
-                if (apikey.Empty())
+                var token = jwtTokenHandler.GetFromAuthorizationHeader(ctx.Request.Headers.Authorization);
+                if (token == null)
                     return null;
+                
+                //TODO: Cache users.
+                User user = null;
+                var isValid = jwtTokenHandler.IsValid(token);
+                if (isValid)
+                {
+                    user = userService.GetAsync(token.Sub).Result;
+                    if (user == null || !user.IsActive)
+                        return null;
 
-                var token = jwtTokenHandler.Decode(apikey);
-                var user = apiKeyService.GetUserAsync(apikey).Result;
-                var isValid = apiKeyService.IsValid(user, apikey);
+                    return GetIdentity(token.Sub, user.Role);
+                }
+
+                user = apiKeyService.GetUserAsync(token.ApiKey).Result;
+                isValid = apiKeyService.IsValid(user, token.ApiKey);
                 if (!isValid)
                     return null;
 
-                return new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, token.Sub),
-                    new Claim(ClaimTypes.Role, user.Role.ToString().ToLowerInvariant())
-                }, "Bearer", ClaimTypes.Name, ClaimTypes.Role));
+                return GetIdentity(token.Sub, user.Role);
             });
             StatelessAuthentication.Enable(pipelines, configuration);
         }
@@ -88,7 +97,15 @@ namespace Lockbox.Api.Framework
                 .WithHeader("Access-Control-Allow-Headers", "Authorization,Accept,Origin," +
                                                             "Connection,Content-Type,User-Agent,X-Requested-With,X-API-Key")
                 .WithHeader("Access-Control-Expose-Headers", "X-API-Key");
-            ;
+        }
+
+        private static ClaimsPrincipal GetIdentity(string username, Role role)
+        {
+                return new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.Role, role.ToString().ToLowerInvariant())
+                }, "Bearer", ClaimTypes.Name, ClaimTypes.Role));
         }
     }
 }

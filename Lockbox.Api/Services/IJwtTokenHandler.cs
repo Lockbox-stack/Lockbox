@@ -6,8 +6,7 @@ namespace Lockbox.Api.Services
     public interface IJwtTokenHandler
     {
         string Create(string username, TimeSpan? expiry = default(TimeSpan?));
-        string GetFromAuthorizationHeader(string authorizationHeader);
-        JwtToken Decode(string token);
+        JwtTokenWithApiKey GetFromAuthorizationHeader(string authorizationHeader);
         bool IsValid(JwtToken token);
     }
 }

@@ -14,7 +14,6 @@ namespace Lockbox.Api.Modules
     {
         public UserModule(IUserService userService, FeatureSettings featureSettings) : base("users")
         {
-
             Get("", async args =>
             {
                 RequiresAdmin();

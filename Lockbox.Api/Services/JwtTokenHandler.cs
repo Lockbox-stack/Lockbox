@@ -29,20 +29,27 @@ namespace Lockbox.Api.Services
             return JWT.Encode(customPayload, _jwtSecretKey, JwsAlgorithm.HS512);
         }
 
-        public string GetFromAuthorizationHeader(string authorizationHeader)
+        public JwtTokenWithApiKey GetFromAuthorizationHeader(string authorizationHeader)
         {
             var authorizationTypeAndToken = authorizationHeader.ParseAuthorzationHeader();
 
             return authorizationTypeAndToken.Key != "bearer"
                 ? null
-                : authorizationTypeAndToken.Value;
+                : Decode(authorizationTypeAndToken.Value);
         }
 
-        public JwtToken Decode(string token)
+        private JwtTokenWithApiKey Decode(string token)
         {
             try
             {
-                return JWT.Decode<JwtToken>(token, _jwtSecretKey, JwsAlgorithm.HS512);
+                var jwtToken = JWT.Decode<JwtToken>(token, _jwtSecretKey, JwsAlgorithm.HS512);
+
+                return new JwtTokenWithApiKey
+                {
+                    Sub = jwtToken.Sub,
+                    Exp = jwtToken.Exp,
+                    ApiKey = token
+                };
             }
             catch (Exception exception)
             {
