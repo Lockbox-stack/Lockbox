@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nancy.Owin;
 using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace Lockbox.Api
 {
