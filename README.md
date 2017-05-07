@@ -1,7 +1,13 @@
 ![Lockbox](http://spetz.github.io/img/lockbox_logo.png)
 
-####**Dead simple, centralized and secured storage for your credentials.**
-####**[getlockbox.com](https://getlockbox.com)**
+# Dead simple, centralized and secured storage for your credentials.
+
+# [getlockbox.com](https://getlockbox.com)
+
+|Branch             |Build status                                                  
+|-------------------|-----------------------------------------------------
+|master             |[![master branch build status](https://api.travis-ci.org/Lockbox-stack/Lockbox.svg?branch=master)](https://travis-ci.org/Lockbox-stack/Lockbox)
+|develop            |[![develop branch build status](https://api.travis-ci.org/Lockbox-stack/Lockbox.svg?branch=develop)](https://travis-ci.org/Lockbox-stack/Lockbox/branches)
 
 **What is Lockbox?**
 ----------------
