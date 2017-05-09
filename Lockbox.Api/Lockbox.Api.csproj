@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Lockbox API.</Description>
     <AssemblyTitle>Lockbox.Api</AssemblyTitle>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>1.0.3</VersionPrefix>
     <Authors>Piotr Gankiewicz</Authors>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <AssemblyName>Lockbox.Api</AssemblyName>
@@ -31,12 +31,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.1" />
     <PackageReference Include="Nancy" Version="2.0.0-clinteastwood" />
     <PackageReference Include="Nancy.Authentication.Stateless" Version="2.0.0-clinteastwood" />
-    <PackageReference Include="MongoDB.Driver" Version="2.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.*" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.*" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-*" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.*" />
   </ItemGroup>
 
   <Target Name="PostcompileScript" AfterTargets="Build">
