@@ -92,7 +92,7 @@ In order to run the Lockbox you need to have installed:
 Create a new [.NET Core](https://www.microsoft.com/net/core) application and execute the following command via NuGet package manager:
 
 ```
-Install-Package Lockbox.Api
+dotnet add package Lockbox.Api
 ```
 
 Change your **Program.cs** code to look like this:
@@ -127,7 +127,7 @@ In order to play with Lockbox examples, please read the [API docs](http://docs.l
 ----------------
 
 ```
-Install-Package Lockbox.Client
+dotnet add package Lockbox.Client
 ```
 
 Create a new [.NET Core](https://www.microsoft.com/net/core) Web application and add the following code to the **Startup.cs**:

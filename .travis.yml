@@ -8,11 +8,10 @@ branches:
     - master
     - develop
 before_script:
-  - chmod a+x ./travis-build.sh
-  - chmod a+x ./run-tests.sh
+  - chmod -R a+x scripts
 script:
-  - ./travis-build.sh
-  - ./run-tests.sh
+  - ./scripts/build.sh
+  - ./scripts/test.sh
 notifications:
   email:
     on_success: never

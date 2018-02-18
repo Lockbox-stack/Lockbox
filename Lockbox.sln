@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Api", "Lockbox.Api\Lockbox.Api.csproj", "{C03022B5-838C-4796-9EB0-45F20161AD04}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Api", "src\Lockbox.Api\Lockbox.Api.csproj", "{C03022B5-838C-4796-9EB0-45F20161AD04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Client", "Lockbox.Client\Lockbox.Client.csproj", "{4921C3B8-A4C1-4AC9-BB17-DFB223906738}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Client", "src\Lockbox.Client\Lockbox.Client.csproj", "{4921C3B8-A4C1-4AC9-BB17-DFB223906738}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Examples.Api", "Lockbox.Examples.Api\Lockbox.Examples.Api.csproj", "{4B3BD553-1BE0-41D8-BEEA-A6DB84348D97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Examples.Api", "src\Lockbox.Examples.Api\Lockbox.Examples.Api.csproj", "{4B3BD553-1BE0-41D8-BEEA-A6DB84348D97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Examples.WebApp", "Lockbox.Examples.WebApp\Lockbox.Examples.WebApp.csproj", "{464FC35E-F176-4785-B499-26ED8C2FDFC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Examples.WebApp", "src\Lockbox.Examples.WebApp\Lockbox.Examples.WebApp.csproj", "{464FC35E-F176-4785-B499-26ED8C2FDFC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Tests", "Lockbox.Tests\Lockbox.Tests.csproj", "{6CDA7A87-4C7A-43F1-8973-56B34C2F26C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lockbox.Tests", "tests\Lockbox.Tests\Lockbox.Tests.csproj", "{6CDA7A87-4C7A-43F1-8973-56B34C2F26C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

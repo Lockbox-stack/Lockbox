@@ -27,7 +27,7 @@ namespace Lockbox.Tests.Api.Services
 
         Because of = () => Salt = Encrypter.GetSalt(Value);
 
-        It should_create_non_empty_salt = () => Salt.ShouldNotBeEmpty();
+        It should_create_non_empty_salt = () => Salt.Should().NotBeEmpty();
     }
 
     [Subject("Encrypter")]
@@ -37,7 +37,7 @@ namespace Lockbox.Tests.Api.Services
 
         Because of = () => EncryptionKey = Encrypter.GetRandomSecureKey();
 
-        It should_create_non_empty_key = () => EncryptionKey.ShouldNotBeEmpty();
+        It should_create_non_empty_key = () => EncryptionKey.Should().NotBeEmpty();
     }
 
     [Subject("Encrypter")]
@@ -51,7 +51,7 @@ namespace Lockbox.Tests.Api.Services
             Hash = Encrypter.GetHash(Value, Salt);
         };
 
-        It should_create_non_empty_hash = () => Hash.ShouldNotBeEmpty();
+        It should_create_non_empty_hash = () => Hash.Should().NotBeEmpty();
     }
 
     [Subject("Encrypter")]
@@ -71,8 +71,8 @@ namespace Lockbox.Tests.Api.Services
 
         It should_encrypt_value = () =>
         {
-            EncryptedValue.ShouldNotBeEmpty();
-            EncryptedValue.ShouldNotEqual(Value);
+            EncryptedValue.Should().NotBeEmpty();
+            EncryptedValue.Should().NotBe(Value);
         };
     }
 
@@ -95,7 +95,7 @@ namespace Lockbox.Tests.Api.Services
 
         It should_decrypt_value = () =>
         {
-            DecryptedValue.ShouldBeEquivalentTo(Value);
+            DecryptedValue.Should().Be(Value);
         };
     }
 }
