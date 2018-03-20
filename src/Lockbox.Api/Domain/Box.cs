@@ -41,6 +41,7 @@ namespace Lockbox.Api.Domain
 
             Name = name.Trim().ToLowerInvariant();
             Owner = owner.Username;
+            Entries = Enumerable.Empty<Entry>();
 
             var boxUser = new BoxUser(owner, BoxRole.BoxAdmin);
             boxUser.AddPermission(Permission.CreateEntry);

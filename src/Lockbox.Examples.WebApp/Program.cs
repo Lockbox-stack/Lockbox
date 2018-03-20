@@ -12,7 +12,7 @@ namespace Lockbox.Examples.WebApp
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
                 .UseIISIntegration()
-                .UseUrls("http://*:5001")
+                .UseUrls("http://*:5051")
                 .Build();
 
             host.Run();

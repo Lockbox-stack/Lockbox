@@ -40,7 +40,15 @@ namespace Lockbox.Api.Services
         }
 
         public async Task<IEnumerable<string>> GetKeysAsync(string box)
-            => await _boxRepository.GetNamesAsync();
+        {
+            var entryBox = await _boxRepository.GetAsync(box);
+            if (entryBox == null)
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            return entryBox.Entries.Select(x => x.Key);
+        }
 
         public async Task CreateAsync(string box, string key, object value, string author, string encryptionKey)
         {

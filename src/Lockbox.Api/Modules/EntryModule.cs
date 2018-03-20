@@ -14,7 +14,7 @@ namespace Lockbox.Api.Modules
 
             Get("", async args =>
             {
-                var keys = await entryPermissionService.GetKeysAsync((string)args.box, CurrentUsername);
+                var keys = await entryPermissionService.GetKeysAsync(CurrentUsername, (string)args.box);
 
                 return keys ?? new List<string>();
             });
@@ -33,7 +33,7 @@ namespace Lockbox.Api.Modules
                 await entryPermissionService.CreateAsync(CurrentUsername,
                     (string) args.box, request.Key, request.Value, EncryptionKey);
 
-                return Created($"entries/{request.Value}");
+                return Created($"entries/{request.Key}");
             });
 
             Delete("{key}", async args =>

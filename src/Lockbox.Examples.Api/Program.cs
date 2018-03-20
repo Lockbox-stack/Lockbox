@@ -12,7 +12,7 @@ namespace Lockbox.Examples.Api
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<LockboxStartup>()
-                .UseUrls("http://*:5000")
+                .UseUrls("http://*:5050")
                 .UseIISIntegration()
                 .Build();
 
