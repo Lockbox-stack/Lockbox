@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
 using Lockbox.Api.Extensions;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Services
 {
     public class BoxService : IBoxService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private readonly IBoxRepository _boxRepository;
         private readonly IUserRepository _userRepository;
         private readonly FeatureSettings _featureSettings;
@@ -75,7 +75,7 @@ namespace Lockbox.Api.Services
 
             var box = new Box(name, user);
             await _boxRepository.AddAsync(box);
-            Logger.Info($"Box '{box.Name}' was created by user '{owner}'.");
+            Logger.Information($"Box '{box.Name}' was created by user '{owner}'.");
         }
 
         public async Task DeleteAsync(string name)
@@ -85,7 +85,7 @@ namespace Lockbox.Api.Services
                 throw new ArgumentNullException($"Box '{name}' has not been found.");
 
             await _boxRepository.DeleteAsync(name);
-            Logger.Info($"Box '{entryBox.Name}' was deleted.");
+            Logger.Information($"Box '{entryBox.Name}' was deleted.");
         }
 
         private async Task<Tuple<Box, User>> GetBoxAndUserAsyncOrFail(string box, string username)

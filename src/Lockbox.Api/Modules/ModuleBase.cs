@@ -5,13 +5,13 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses.Negotiation;
 using Nancy.Security;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Modules
 {
     public abstract class ModuleBase : NancyModule
     {
-        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected static readonly ILogger Logger = Log.Logger;
 
         protected ModuleBase(string modulePath = "") : base(modulePath)
         {

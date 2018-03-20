@@ -3,13 +3,13 @@ using System.Text;
 using Jose;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Extensions;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Services
 {
     public class JwtTokenHandler : IJwtTokenHandler
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private readonly byte[] _jwtSecretKey;
 
         public JwtTokenHandler(LockboxSettings lockboxSettings)

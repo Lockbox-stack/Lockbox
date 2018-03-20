@@ -5,13 +5,13 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Services
 {
     public class EntryPermissionService : IEntryPermissionService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private readonly IEntryService _entryService;
         private readonly IUserRepository _userRepository;
         private readonly IBoxRepository _boxRepository;

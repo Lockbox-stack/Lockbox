@@ -5,14 +5,14 @@ using Nancy;
 using Nancy.Configuration;
 using Nancy.ErrorHandling;
 using Nancy.Responses;
-using NLog;
+using Serilog;
 using System.Linq;
 
 namespace Lockbox.Api.Framework
 {
     public class ErrorResponse : JsonResponse
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
 
         private ErrorResponse(ErrorMessage error, INancyEnvironment environment)
             : base(error, new DefaultJsonSerializer(environment), environment)
@@ -21,7 +21,7 @@ namespace Lockbox.Api.Framework
 
         public static ErrorResponse FromException(Exception exception, INancyEnvironment environment)
         {
-            Logger.Error(exception);
+            Logger.Error(exception, string.Empty);
 
             var statusCode = HttpStatusCode.InternalServerError;
             if (exception is ArgumentNullException)

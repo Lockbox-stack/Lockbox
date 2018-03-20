@@ -9,8 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nancy.Owin;
-using NLog.Extensions.Logging;
-using NLog.Web;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
+using Serilog.Formatting.Json;
 
 namespace Lockbox.Api
 {
@@ -43,8 +45,13 @@ namespace Lockbox.Api
 
         public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddNLog();
-            env.ConfigureNLog("nlog.config");
+            loggerFactory.AddSerilog();
+            var logLevel = LogEventLevel.Debug;
+            var configuration = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .MinimumLevel.Is(logLevel);
+            configuration.WriteTo.Console(new JsonFormatter(), logLevel);
+            Log.Logger = configuration.CreateLogger();
             app.UseCors(builder => builder.AllowAnyHeader()
                .AllowAnyMethod()
                .AllowAnyOrigin()

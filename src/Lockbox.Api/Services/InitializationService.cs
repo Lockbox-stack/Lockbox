@@ -2,13 +2,13 @@
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Services
 {
     public class InitializationService : IInitializationService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private readonly IApiKeyService _apiKeyService;
         private readonly IUserRepository _userRepository;
         private readonly IEncrypter _encrypter;
@@ -31,7 +31,7 @@ namespace Lockbox.Api.Services
             user.Activate();
             await _userRepository.AddAsync(user);
             var apiKey = await _apiKeyService.CreateAsync(username);
-            Logger.Info($"Lockbox initialization has completed. System admin: {username}.");
+            Logger.Information($"Lockbox initialization has completed. System admin: {username}.");
 
             return apiKey;
         }

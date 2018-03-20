@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Services
 {
     public class BoxUserService : IBoxUserService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private readonly IBoxRepository _boxRepository;
         private readonly IUserRepository _userRepository;
         private readonly FeatureSettings _featureSettings;
@@ -54,7 +54,7 @@ namespace Lockbox.Api.Services
             boxUser.AddPermission(Permission.ReadEntry);
             boxEntry.AddUser(boxUser);
             await _boxRepository.UpdateAsync(boxEntry);
-            Logger.Info($"User '{username}' was added to the box '{boxEntry.Name}'.");
+            Logger.Information($"User '{username}' was added to the box '{boxEntry.Name}'.");
         }
 
         public async Task UpdateAsync(string box, string username, BoxRole? role = null, bool? isActive = null)
@@ -74,7 +74,7 @@ namespace Lockbox.Api.Services
                     boxUser.Lock();
             }
             await _boxRepository.UpdateAsync(boxEntry);
-            Logger.Info($"User '{username}' was added updated in the box '{boxEntry.Name}'.");
+            Logger.Information($"User '{username}' was added updated in the box '{boxEntry.Name}'.");
         }
 
         public async Task ActivateAsync(string box, string username)
@@ -86,7 +86,7 @@ namespace Lockbox.Api.Services
 
             boxUser.Activate();
             await _boxRepository.UpdateAsync(boxEntry);
-            Logger.Info($"User '{username}' was activated in the box '{boxEntry.Name}'.");
+            Logger.Information($"User '{username}' was activated in the box '{boxEntry.Name}'.");
         }
 
         public async Task LockAsync(string box, string username)
@@ -98,7 +98,7 @@ namespace Lockbox.Api.Services
 
             boxUser.Lock();
             await _boxRepository.UpdateAsync(boxEntry);
-            Logger.Info($"User '{username}' was locked in the box '{boxEntry.Name}'.");
+            Logger.Information($"User '{username}' was locked in the box '{boxEntry.Name}'.");
         }
 
         public async Task DeleteAsync(string box, string username)
@@ -120,7 +120,7 @@ namespace Lockbox.Api.Services
             }
             boxEntry.DeleteUser(username);
             await _boxRepository.UpdateAsync(boxEntry);
-            Logger.Info($"User '{username}' was deleted from the box '{boxEntry.Name}'.");
+            Logger.Information($"User '{username}' was deleted from the box '{boxEntry.Name}'.");
         }
 
         private async Task<Box> GetBoxAsyncOrFail(string box)

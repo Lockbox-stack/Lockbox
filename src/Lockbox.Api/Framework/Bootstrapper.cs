@@ -11,14 +11,14 @@ using Microsoft.Extensions.Configuration;
 using Nancy;
 using Nancy.Authentication.Stateless;
 using Nancy.Bootstrapper;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Framework
 {
     public class Bootstrapper : AutofacNancyBootstrapper
     {
         private readonly IConfiguration _configuration;
-        protected static Logger Logger = LogManager.GetCurrentClassLogger();
+        protected static ILogger Logger = Log.Logger;
 
         public Bootstrapper(IConfiguration configuration)
         {
@@ -34,7 +34,7 @@ namespace Lockbox.Api.Framework
             {
                 AddCorsHeaders(ctx.Response);
             };
-            Logger.Info("Lockbox API has started.");
+            Logger.Information("Lockbox API has started.");
         }
 
         protected override void ConfigureApplicationContainer(ILifetimeScope existingContainer)

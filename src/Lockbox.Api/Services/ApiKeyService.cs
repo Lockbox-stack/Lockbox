@@ -4,13 +4,13 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Services
 {
     public class ApiKeyService : IApiKeyService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private readonly IJwtTokenHandler _jwtTokenHandler;
         private readonly IUserRepository _userRepository;
 
@@ -34,7 +34,7 @@ namespace Lockbox.Api.Services
             var apiKey = _jwtTokenHandler.Create(username, expiry);
             user.AddApiKey(apiKey);
             await _userRepository.UpdateAsync(user);
-            Logger.Info($"API key was created by user '{username}'.");
+            Logger.Information($"API key was created by user '{username}'.");
 
             return apiKey;
         }
@@ -59,7 +59,7 @@ namespace Lockbox.Api.Services
 
             user.DeleteApiKey(apiKey);
             await _userRepository.UpdateAsync(user);
-            Logger.Info($"API key was deleted by user '{user.Username}'.");
+            Logger.Information($"API key was deleted by user '{user.Username}'.");
         }
     }
 }

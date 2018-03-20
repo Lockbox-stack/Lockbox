@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
 using Newtonsoft.Json;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Services
 {
     public class EntryService : IEntryService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private readonly IEncrypter _encrypter;
         private readonly IBoxRepository _boxRepository;
         private readonly FeatureSettings _featureSettings;
@@ -70,7 +70,7 @@ namespace Lockbox.Api.Services
             await DeleteAsync(box, key);
             entryBox.AddEntry(entry);
             await _boxRepository.UpdateAsync(entryBox);
-            Logger.Info($"Eentry '{key}' was added to the box '{box}'.");
+            Logger.Information($"Eentry '{key}' was added to the box '{box}'.");
         }
 
         public async Task DeleteAsync(string box, string key)
@@ -81,7 +81,7 @@ namespace Lockbox.Api.Services
 
             entryBox.DeleteEntry(key);
             await _boxRepository.UpdateAsync(entryBox);
-            Logger.Info($"Entry '{key}' was deleted from the box '{box}'.");
+            Logger.Information($"Entry '{key}' was deleted from the box '{box}'.");
         }
     }
 }

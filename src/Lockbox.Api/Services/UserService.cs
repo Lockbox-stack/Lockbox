@@ -5,13 +5,13 @@ using Lockbox.Api.Domain;
 using Lockbox.Api.Repositories;
 using Lockbox.Api.Extensions;
 using MongoDB.Bson;
-using NLog;
+using Serilog;
 
 namespace Lockbox.Api.Services
 {
     public class UserService : IUserService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private readonly IUserRepository _userRepository;
         private readonly IApiKeyService _apiKeyService;
         private readonly IEncrypter _encrypter;
@@ -45,7 +45,7 @@ namespace Lockbox.Api.Services
             user.Activate();
             await _userRepository.AddAsync(user);
             await _apiKeyService.CreateAsync(username);
-            Logger.Info($"User '{user.Username}' was created with role '{role}'.");
+            Logger.Information($"User '{user.Username}' was created with role '{role}'.");
         }
 
         public async Task ActivateAsync(string username)
@@ -53,7 +53,7 @@ namespace Lockbox.Api.Services
             var user = await GetAsyncOrFail(username);
             user.Activate();
             await _userRepository.UpdateAsync(user);
-            Logger.Info($"User '{user.Username}' was activated.");
+            Logger.Information($"User '{user.Username}' was activated.");
         }
 
         public async Task LockAsync(string username)
@@ -61,7 +61,7 @@ namespace Lockbox.Api.Services
             var user = await GetAsyncOrFail(username);
             user.Lock();
             await _userRepository.UpdateAsync(user);
-            Logger.Info($"User '{user.Username}' was locked.");
+            Logger.Information($"User '{user.Username}' was locked.");
         }
 
         public async Task DeleteAsync(string username)
@@ -74,7 +74,7 @@ namespace Lockbox.Api.Services
                     throw new InvalidOperationException("Can not delete the only one admin account.");
             }
             await _userRepository.DeleteAsync(username);
-            Logger.Info($"User '{user.Username}' was deleted.");
+            Logger.Information($"User '{user.Username}' was deleted.");
         }
 
         private async Task<User> GetAsyncOrFail(string username)
