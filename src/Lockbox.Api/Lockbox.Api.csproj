@@ -4,7 +4,7 @@
     <Description>Lockbox API.</Description>
     <AssemblyTitle>Lockbox.Api</AssemblyTitle>
     <Title>Lockbox.Api</Title>
-    <VersionPrefix>2.0.2</VersionPrefix>
+    <VersionPrefix>2.0.3</VersionPrefix>
     <Authors>Piotr Gankiewicz</Authors>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Lockbox.Api</AssemblyName>
